@@ -47,13 +47,16 @@ class LearningMazeDomain():
         steps_to_goal = 0
         absorb = False
         samples = []
-
+        states = []
         while (not absorb) and (steps_to_goal < max_steps):
+            states.append(self.domain.current_state())
             action = learned_policy.select_action(self.domain.current_state())
             sample = self.domain.apply_action(action)
             absorb = sample.absorb
             if absorb:
                 print('Reached the goal in %d', steps_to_goal)
+                print("States:", states)
+                states = []
             steps_to_goal += 1
             samples.append(sample)
 
@@ -73,13 +76,16 @@ class LearningMazeDomain():
         steps_to_goal = 0
         absorb = False
         samples = []
-
+        states = []
         while (not absorb) and (steps_to_goal < max_steps):
+            states.append(self.domain.current_state())
             action = learned_policy.select_action(self.domain.current_state())
             sample = self.domain.apply_action(action)
             absorb = sample.absorb
             if absorb:
                 print('Reached the goal in %d', steps_to_goal)
+                print("States: ",states)
+                states = []
             steps_to_goal += 1
             samples.append(sample)
 
@@ -114,3 +120,5 @@ class LearningMazeDomain():
             samples.append(sample)
 
         return steps_to_goal, learned_policy, samples, distances
+    
+    
