@@ -6,7 +6,7 @@ from learning_maze import LearningMazeDomain
 num_samples = 2000
 DIMENSION = [5, 10]
 DISCOUNT = [0.9, 0.95, 0.99]
-GRID_SIZES = range(5,11)
+GRID_SIZES = range(10,11)
 
 def main():
     for discount in DISCOUNT:
@@ -93,11 +93,11 @@ def plot_results(pvf_all_results, grid_size, reward_location, dimension, discoun
 
     fig, axs = plt.subplots(nrows=2, ncols=1, sharex=True)
 
-    ax = axs[0, 0]
+    ax = axs[0]
     ax.errorbar(sum([range(reward_location), range(grid_size,grid_size*grid_size)],[]),pvf_mean_steps_to_goal, yerr=pvf_std_steps_to_goal, fmt='ro',ecolor='red')
     ax.set_title('pvf: number of steps')
 
-    ax = axs[1, 0]
+    ax = axs[1]
     ax.errorbar(sum([range(reward_location), range(grid_size, grid_size * grid_size)], []), pvf_mean_cumulative_rewards,
                 yerr=pvf_std_cumulative_rewards, fmt='ro', ecolor='red')
     ax.set_title('pvf: cumulative reward')
