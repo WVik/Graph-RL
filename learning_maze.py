@@ -53,8 +53,8 @@ class LearningMazeDomain():
             action = learned_policy.select_action(self.domain.current_state())
             sample = self.domain.apply_action(action)
             absorb = sample.absorb
-            if absorb:
-                print('Reached the goal in %d', steps_to_goal)
+            # if absorb:
+            #     print('Reached the goal in %d', steps_to_goal)
             steps_to_goal += 1
             samples.append(sample)
 
