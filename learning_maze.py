@@ -55,8 +55,6 @@ class LearningMazeDomain():
             absorb = sample.absorb
             if absorb:
                 print('Reached the goal in %d', steps_to_goal)
-                print("States:", states)
-                states = []
             steps_to_goal += 1
             samples.append(sample)
 
@@ -84,8 +82,8 @@ class LearningMazeDomain():
             absorb = sample.absorb
             if absorb:
                 print('Reached the goal in %d', steps_to_goal)
-                print("States: ",states)
-                states = []
+                # print("States: ",states)
+                # states = []
             steps_to_goal += 1
             samples.append(sample)
 

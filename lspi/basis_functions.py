@@ -5,6 +5,9 @@ import abc
 import networkx as nx
 import node2vec
 from gensim.models import Word2Vec
+from gensim.models import KeyedVectors
+from gensim.scripts.glove2word2vec import glove2word2vec
+from gensim.test.utils import datapath, get_tmpfile
 import numpy as np
 
 
@@ -768,7 +771,8 @@ class Node2vecBasis(BasisFunction):
 
         if dimension < 0:
             raise ValueError('dimension must be >= 0')
-
+        
+        self._external_embeddings = 0
         self.__num_actions = BasisFunction._validate_num_actions(num_actions)
 
         self._dimension = dimension
@@ -785,7 +789,9 @@ class Node2vecBasis(BasisFunction):
         self.G = node2vec.Graph(self._nxgraph, False, self._p, self._q, transition_probabilities)
         self.G.preprocess_transition_probs()
         walks = self.G.simulate_walks(self._num_walks, self._walk_length)
+        
         self.model = self.learn_embeddings(walks)
+        print(self.model)
 
     def size(self):
         r"""Return the vector size of the basis function.
@@ -877,8 +883,9 @@ class Node2vecBasis(BasisFunction):
         Learn embeddings by optimizing the Skipgram objective using SGD.
         '''
         walks = [map(str, walk) for walk in walks]
-        model = Word2Vec(walks, size=self._dimension, window=self._window_size, min_count=0, sg=1,
-                         workers=self._workers, iter=self._epochs)
-
+        # model = Word2Vec(walks, size=self._dimension, window=self._window_size, min_count=0, sg=1,
+        #                  workers=self._workers, iter=self._epochs)
+        model = KeyedVectors.load_word2vec_format('./temp',binary=False)
+        model.save_word2vec_format("./temp2")
         return model
 

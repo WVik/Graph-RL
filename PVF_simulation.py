@@ -23,18 +23,23 @@ def main():
                 maze = LearningMazeDomain(height, width, reward_location, walls_location, obstacles_location,
                                           num_sample=num_samples)
 
+
                 pvf_all_results = {}
 
-                for k in xrange(10):
+                for k in xrange(2):
                     pvf_num_steps, pvf_learned_policy, pvf_samples, pvf_distances = maze.learn_proto_values_basis(num_basis=dimension, explore=0,
                                                                                                                   discount=discount, max_steps=500,
                                                                                                                   max_iterations=200)
 
+                    #steps_to_goal, learned_policy, samples, distances = maze.learn_node2vec_basis()
                     pvf_all_steps_to_goal, pvf_all_samples, pvf_all_cumulative_rewards = simulate(num_states, reward_location,
                                                                                                   walls_location, maze, pvf_learned_policy)
+                    
                     pvf_all_results[k] = {'steps_to_goal': pvf_all_steps_to_goal, 'samples': pvf_all_samples,
                                           'cumul_rewards': pvf_all_cumulative_rewards, 'learning_distances': pvf_distances}
 
+                    #print(pvf_all_results[k]["steps_to_goal"])
+                print(pvf_all_results[0])
                 plot_results(pvf_all_results, grid_size, reward_location, dimension, discount, num_samples)
 
                 # UNCOMMENT the lines below to right the results in pickle files
@@ -72,6 +77,11 @@ def simulate(num_states, reward_location, walls_location, maze, learned_policy, 
     return all_steps_to_goal, all_samples, all_cumulative_rewards
 
 
+# def display_results(all_results, grid_size, reward_location, dimension, discount, num_samples):
+#     mean_steps_to_goal = 0
+#     for init_state in range(grid_size*grid_size):
+        
+
 def plot_results(pvf_all_results, grid_size, reward_location, dimension, discount, num_samples):
     pvf_mean_cumulative_rewards = []
     pvf_std_cumulative_rewards = []
@@ -83,7 +93,7 @@ def plot_results(pvf_all_results, grid_size, reward_location, dimension, discoun
         if init_state != reward_location:
             pvf_cumulative_rewards = []
             pvf_steps_to_goal = []
-            for k in range(10):
+            for k in range():
                 pvf_cumulative_rewards.append(pvf_all_results[k]['cumul_rewards'][init_state])
                 pvf_steps_to_goal.append(pvf_all_results[k]['steps_to_goal'][init_state])
             pvf_mean_cumulative_rewards.append(np.mean(pvf_cumulative_rewards))
