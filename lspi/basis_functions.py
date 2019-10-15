@@ -764,7 +764,7 @@ class Node2vecBasis(BasisFunction):
     """
 
     def __init__(self, graph_edgelist, num_actions, transition_probabilities, dimension,
-                 walk_length=20, num_walks=10, window_size=10, p=1, q=1, epochs=1, workers=8):
+                 walk_length=20, num_walks=100, window_size=10, p=1, q=1, epochs=1, workers=8):
         """Initialize ExactBasis."""
         if graph_edgelist is None:
             raise ValueError('graph cannot be None')
@@ -791,7 +791,7 @@ class Node2vecBasis(BasisFunction):
         walks = self.G.simulate_walks(self._num_walks, self._walk_length)
         
         self.model = self.learn_embeddings(walks)
-        print(self.model)
+       # print(self.model)
 
     def size(self):
         r"""Return the vector size of the basis function.
