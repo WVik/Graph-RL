@@ -9,7 +9,11 @@ from gensim.models import KeyedVectors
 from gensim.scripts.glove2word2vec import glove2word2vec
 from gensim.test.utils import datapath, get_tmpfile
 import numpy as np
+import sys
 
+sys.path.append('./..')
+import learning_maze as lm
+#from learning_maze import LearningMazeDomain
 
 class BasisFunction(object):
 
@@ -774,8 +778,9 @@ class Node2vecBasis(BasisFunction):
         
         self._external_embeddings = 0
         self.__num_actions = BasisFunction._validate_num_actions(num_actions)
-
-        self._dimension = dimension
+        
+        #Vikram - Readjust the dimension
+        self._dimension = dimension/2
 
         self._nxgraph = self.read_graph(graph_edgelist)
         self._walk_length = walk_length
@@ -802,8 +807,10 @@ class Node2vecBasis(BasisFunction):
             The size of the :math:`\phi` vector.
             (Referred to as k in the paper).
         """
-        return self._dimension * self.__num_actions
-
+        #Vikram - Double the number of weights
+        return self._dimension * 2 * self.__num_actions
+        #return self._dimension
+        
     def evaluate(self, state, action):
         r"""Return a :math:`\phi` vector that has a self._num_laplacian_eigenvectors non-zero value.
 
@@ -832,13 +839,38 @@ class Node2vecBasis(BasisFunction):
             If any of the state variables are < 0 or >= the corresponding
             value in the num_states list used during construction.
         """
+    
+        grid_size = 6
+        height = width = grid_size
+        num_states = grid_size*grid_size
+        reward_location = grid_size - 1
+        obstacles_location = []
+        walls_location = []
 
-        phi = np.zeros(self._dimension*self.__num_actions)
+        maze = lm.LearningMazeDomain(height, width, reward_location, walls_location, obstacles_location,
+                                  num_sample=1)
 
-        action_window = action*self._dimension
+
+        phi = np.zeros(self._dimension*2*self.__num_actions)
+
+        action_window = action*self._dimension*2
         for basis_fct in self.model[str(state[0])]:
             phi[action_window] = basis_fct
             action_window = action_window + 1
+        
+        maze.domain.reset(np.array([state[0]]))
+        
+        sample = maze.domain.apply_action(action)
+        next_state = sample.next_state
+
+        for basis_fct in self.model[str(next_state[0])]:
+            phi[action_window] = basis_fct
+            action_window = action_window + 1
+
+
+        
+        #Access the next state and 
+        #next_state = 
 
         return phi
 
@@ -883,9 +915,9 @@ class Node2vecBasis(BasisFunction):
         Learn embeddings by optimizing the Skipgram objective using SGD.
         '''
         walks = [map(str, walk) for walk in walks]
-        # model = Word2Vec(walks, size=self._dimension, window=self._window_size, min_count=0, sg=1,
-        #                  workers=self._workers, iter=self._epochs)
-        model = KeyedVectors.load_word2vec_format('./temp',binary=False)
-        model.save_word2vec_format("./temp2")
+        model = Word2Vec(walks, size=self._dimension, window=self._window_size, min_count=0, sg=1,
+                         workers=self._workers, iter=self._epochs)
+        #model = KeyedVectors.load_word2vec_format('./temp',binary=False)
+        #model.save_word2vec_format("./temp2")
         return model
 
