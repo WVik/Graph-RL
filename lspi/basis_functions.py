@@ -796,7 +796,7 @@ class Node2vecBasis(BasisFunction):
         walks = self.G.simulate_walks(self._num_walks, self._walk_length)
         
         self.model = self.learn_embeddings(walks)
-        print(self.model)
+        
 
     def size(self):
         r"""Return the vector size of the basis function.
