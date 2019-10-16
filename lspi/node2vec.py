@@ -49,9 +49,9 @@ class Graph():
         G = self.G
         walks = []
         nodes = list(G.nodes())
-        print 'Walk iteration:'
+        # print 'Walk iteration:'
         for walk_iter in range(num_walks):
-            print str(walk_iter + 1), '/', str(num_walks)
+        #    print str(walk_iter + 1), '/', str(num_walks)
             random.shuffle(nodes)
             for node in nodes:
                 if self.transition_probabilities[node] > 0:
