@@ -94,6 +94,7 @@ class LearningMazeDomain():
                              max_steps=NUM_SAMPLES, initial_policy=None, edgelist ='node2vec/graph/grid6.edgelist'):
 
     
+	max_steps = 0
 
         if initial_policy is None:
             initial_policy = lspi.Policy(lspi.basis_functions.Node2vecBasis(
@@ -118,7 +119,7 @@ class LearningMazeDomain():
                 print('Reached the goal in %d', steps_to_goal)
             steps_to_goal += 1
             samples.append(sample)
-
+	print("learnt")
         return steps_to_goal, learned_policy, samples, distances
     
     

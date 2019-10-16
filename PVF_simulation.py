@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from learning_maze import LearningMazeDomain
 
 num_samples = 10
-DIMENSION = [25, 30, 35, 40, 45, 50, 55, 60, 70, 80, 90]
+DIMENSION = [20, 30, 40, 50, 60, 70, 80, 90]
 DISCOUNT = [0.9]
 GRID_SIZES = range(6,7)
 
@@ -31,11 +31,11 @@ def main():
                                                                                                                  # discount=discount, max_steps=500,
                                                                                                                  # max_iterations=200)
 
-                    steps_to_goal, learned_policy, samples, distances = maze.learn_node2vec_basis()
-                    all_steps_to_goal, all_samples, all_cumulative_rewards = simulate(num_states, reward_location,
+                   steps_to_goal, learned_policy, samples, distances = maze.learn_node2vec_basis(dimension=dimension)
+                   all_steps_to_goal, all_samples, all_cumulative_rewards = simulate(num_states, reward_location,
                                                                                                   walls_location, maze, learned_policy)
                     
-                    all_results[k] = {'steps_to_goal': all_steps_to_goal, 'samples': all_samples,
+                   all_results[k] = {'steps_to_goal': all_steps_to_goal, 'samples': all_samples,
                                           'cumul_rewards': all_cumulative_rewards, 'learning_distances': distances}
 
                     #print(pvf_all_results[k]["steps_to_goal"])
