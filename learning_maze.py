@@ -23,12 +23,19 @@ class LearningMazeDomain():
 
         self.samples = []
 
-        for i in xrange(num_sample):
-            action = sampling_policy.select_action(self.domain.current_state())
-            self.samples.append(self.domain.apply_action(action))
+        # for i in xrange(num_sample):
+        #     action = sampling_policy.select_action(self.domain.current_state())
+        #     self.samples.append(self.domain.apply_action(action))
 
-        self.random_policy_cumulative_rewards = np.sum([sample.reward for
-                                                        sample in self.samples])
+        for i in xrange(height*width):
+            if i != reward_location:
+                for times in range(1, 10):
+                    self.domain.reset(np.array([i]))
+                    action = sampling_policy.select_action(self.domain.current_state())
+                    self.samples.append(self.domain.apply_action(action))
+
+
+        self.random_policy_cumulative_rewards = np.sum([sample.reward for sample in self.samples])
 
         self.solver = lspi.solvers.LSTDQSolver()
 
