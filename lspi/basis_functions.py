@@ -883,9 +883,9 @@ class Node2vecBasis(BasisFunction):
         Learn embeddings by optimizing the Skipgram objective using SGD.
         '''
         walks = [map(str, walk) for walk in walks]
-        # model = Word2Vec(walks, size=self._dimension, window=self._window_size, min_count=0, sg=1,
-        #                  workers=self._workers, iter=self._epochs)
-        model = KeyedVectors.load_word2vec_format('./temp',binary=False)
-        model.save_word2vec_format("./temp2")
+        model = Word2Vec(walks, size=self._dimension, window=self._window_size, min_count=0, sg=1,
+                          workers=self._workers, iter=self._epochs)
+        #model = KeyedVectors.load_word2vec_format('./temp',binary=False)
+        #model.save_word2vec_format("./temp2")
         return model
 

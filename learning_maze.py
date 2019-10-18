@@ -42,7 +42,9 @@ class LearningMazeDomain():
     def learn_proto_values_basis(self, num_basis=NUM_BASIS, discount=DISCOUNT,
                                  explore=EXPLORE, max_iterations=MAX_ITERATIONS, max_steps=NUM_SAMPLES, initial_policy=None):
 
-        if initial_policy is None:
+        max_steps = 0
+	
+	if initial_policy is None:
             initial_policy = lspi.Policy(lspi.basis_functions.ProtoValueBasis(
                 self.domain.graph, 4, num_basis), discount, explore)
 
@@ -98,7 +100,7 @@ class LearningMazeDomain():
 
     def learn_node2vec_basis(self, dimension=NUM_BASIS, walk_length=30, num_walks=10, window_size=10,
                              p=1, q=1, epochs=1, discount=DISCOUNT, explore=EXPLORE, max_iterations=MAX_ITERATIONS,
-                             max_steps=NUM_SAMPLES, initial_policy=None, edgelist ='node2vec/graph/grid6.edgelist'):
+                             max_steps=NUM_SAMPLES, initial_policy=None, edgelist ='node2vec/graph/grid10.edgelist'):
 
         if initial_policy is None:
             initial_policy = lspi.Policy(lspi.basis_functions.Node2vecBasis(
