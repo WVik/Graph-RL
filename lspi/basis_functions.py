@@ -768,7 +768,7 @@ class Node2vecBasis(BasisFunction):
     """
 
     def __init__(self, graph_edgelist, num_actions, transition_probabilities, dimension,
-                 walk_length=20, num_walks=10, window_size=10, p=1, q=1, epochs=1, workers=8):
+                 walk_length=8, num_walks=100, window_size=10, p=1, q=1, epochs=1, workers=8):
         """Initialize ExactBasis."""
         if graph_edgelist is None:
             raise ValueError('graph cannot be None')
@@ -867,8 +867,13 @@ class Node2vecBasis(BasisFunction):
             phi[action_window] = basis_fct
             action_window = action_window + 1
 
-
-        
+	#print(self.model[str(state[0])])
+	#print(self.model[str(next_state[0])])
+	#print(phi)
+       
+	#print("     ")
+	#print("     ")
+ 
         #Access the next state and 
         #next_state = 
 
