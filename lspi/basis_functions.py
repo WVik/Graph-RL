@@ -795,7 +795,7 @@ class Node2vecBasis(BasisFunction):
         self.G.preprocess_transition_probs()
         walks = self.G.simulate_walks(self._num_walks, self._walk_length)
         
-        self.model = self.learn_embeddings(walks)
+        self.model1, self.model2 = self.learn_embeddings(walks)
         
 
     def size(self):
@@ -920,9 +920,9 @@ class Node2vecBasis(BasisFunction):
         Learn embeddings by optimizing the Skipgram objective using SGD.
         '''
         walks = [map(str, walk) for walk in walks]
-        model = Word2Vec(walks, size=self._dimension, window=self._window_size, min_count=0, sg=1,
+        #model = Word2Vec(walks, size=self._dimension, window=self._window_size, min_count=0, sg=1,
                          workers=self._workers, iter=self._epochs)
-        #model = KeyedVectors.load_word2vec_format('./temp',binary=False)
-        #model.save_word2vec_format("./temp2")
-        return model
+        model1 = KeyedVectors.load_word2vec_format('./source',binary=False)
+        model2 = KeyedVectors.load_word2vec_format('./dest',binary=False)
+        return model1,model2
 
