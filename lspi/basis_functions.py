@@ -874,7 +874,7 @@ class Node2vecBasis(BasisFunction):
         for edge in G.edges():
             G[edge[0]][edge[1]]['weight'] = 1
 
-        G = G.to_undirected()
+        # G = G.to_undirected()
 
         return G
 
