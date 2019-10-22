@@ -99,10 +99,9 @@ class LearningMazeDomain():
 
     def learn_node2vec_basis(self, maze=None,dimension=NUM_BASIS, walk_length=30, num_walks=10, window_size=10,
                              p=1, q=1, epochs=1, discount=DISCOUNT, explore=EXPLORE, max_iterations=MAX_ITERATIONS,
-                             max_steps=NUM_SAMPLES, initial_policy=None, edgelist ='node2vec/graph/grid6.edgelist'):
-
-    
-	max_steps = 0
+                             max_steps=NUM_SAMPLES, initial_policy=None, edgelist ='node2vec/graph/grid10.edgelist'):
+                             
+        max_steps = 0
 
         if initial_policy is None:
             initial_policy = lspi.Policy(lspi.basis_functions.Node2vecBasis(
@@ -126,8 +125,10 @@ class LearningMazeDomain():
             if absorb:
                 print('Reached the goal in %d', steps_to_goal)
             steps_to_goal += 1
+
             samples.append(sample)
-	print("learnt")
+        
+        print("learnt")
         return steps_to_goal, learned_policy, samples, distances
     
     

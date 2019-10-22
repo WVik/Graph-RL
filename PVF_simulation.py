@@ -4,9 +4,9 @@ import matplotlib.pyplot as plt
 from learning_maze import LearningMazeDomain
 
 num_samples = 10
-DIMENSION = [20, 30, 40, 50, 60, 70, 80, 90]
+DIMENSION = [200]
 DISCOUNT = [0.9]
-GRID_SIZES = range(6,7)
+GRID_SIZES = range(10,11)
 
 def main():
     for discount in DISCOUNT:

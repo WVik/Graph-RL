@@ -840,7 +840,7 @@ class Node2vecBasis(BasisFunction):
             value in the num_states list used during construction.
         """
     
-        grid_size = 6
+        grid_size = 10
         height = width = grid_size
         num_states = grid_size*grid_size
         reward_location = grid_size - 1
@@ -854,7 +854,7 @@ class Node2vecBasis(BasisFunction):
         phi = np.zeros(self._dimension*2*self.__num_actions)
 
         action_window = action*self._dimension*2
-        for basis_fct in self.model[str(state[0])]:
+        for basis_fct in self.model1[str(state[0])]:
             phi[action_window] = basis_fct
             action_window = action_window + 1
         
@@ -863,7 +863,7 @@ class Node2vecBasis(BasisFunction):
         sample = maze.domain.apply_action(action)
         next_state = sample.next_state
 
-        for basis_fct in self.model[str(next_state[0])]:
+        for basis_fct in self.model2[str(next_state[0])]:
             phi[action_window] = basis_fct
             action_window = action_window + 1
 
@@ -921,8 +921,8 @@ class Node2vecBasis(BasisFunction):
         '''
         walks = [map(str, walk) for walk in walks]
         #model = Word2Vec(walks, size=self._dimension, window=self._window_size, min_count=0, sg=1,
-                         workers=self._workers, iter=self._epochs)
-        model1 = KeyedVectors.load_word2vec_format('./source',binary=False)
-        model2 = KeyedVectors.load_word2vec_format('./dest',binary=False)
+                         #workers=self._workers, iter=self._epochs)
+        model1 = KeyedVectors.load_word2vec_format('./source.txt',binary=False)
+        model2 = KeyedVectors.load_word2vec_format('./dest.txt',binary=False)
         return model1,model2
 
