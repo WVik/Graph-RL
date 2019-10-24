@@ -117,7 +117,7 @@ class LearningMazeDomain():
         steps_to_goal = 0
         absorb = False
         samples = []
-
+	print("learn")
         while (not absorb) and (steps_to_goal < max_steps):
             action = learned_policy.select_action(self.domain.current_state())
             sample = self.domain.apply_action(action)
