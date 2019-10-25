@@ -6,8 +6,8 @@ NUM_BASIS = 5
 DEGREE = 3
 DISCOUNT = .9
 EXPLORE = 0
-NUM_SAMPLES = 5000
-MAX_ITERATIONS = 100000
+NUM_SAMPLES = 1
+MAX_ITERATIONS = 1
 MAX_STEPS = 100
 
 
@@ -112,6 +112,7 @@ class LearningMazeDomain():
         learned_policy, distances = lspi.learn(self.samples, initial_policy, self.solver,
                                                max_iterations=max_iterations)
 
+        
         self.domain.reset()
 
         steps_to_goal = 0
