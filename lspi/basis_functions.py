@@ -777,25 +777,31 @@ class Node2vecBasis(BasisFunction):
             raise ValueError('dimension must be >= 0')
         
         self._external_embeddings = 0
+        
+        
         self.__num_actions = BasisFunction._validate_num_actions(num_actions)
         
         #Vikram - Readjust the dimension
         self._dimension = dimension/2
 
         self._nxgraph = self.read_graph(graph_edgelist)
-        self._walk_length = walk_length
-        self._num_walks = num_walks
-        self._window_size = window_size
-        self._p = p
-        self._q = q
-        self._epochs = epochs
-        self._workers = workers
 
-        self.G = node2vec.Graph(self._nxgraph, False, self._p, self._q, transition_probabilities)
-        self.G.preprocess_transition_probs()
-        walks = self.G.simulate_walks(self._num_walks, self._walk_length)
-        
+        walks = []
         self.model1, self.model2 = self.learn_embeddings(walks)
+
+
+        # self._walk_length = walk_length
+        # self._num_walks = num_walks
+        # self._window_size = window_size
+        # self._p = p
+        # self._q = q
+        # self._epochs = epochs
+        # self._workers = workers
+
+        # self.G = node2vec.Graph(self._nxgraph, False, self._p, self._q, transition_probabilities)
+        # self.G.preprocess_transition_probs()
+        # walks = self.G.simulate_walks(self._num_walks, self._walk_length)
+        
         
 
     def size(self):
