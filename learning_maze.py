@@ -19,6 +19,8 @@ class LearningMazeDomain():
         self.domain = lspi.domains.GridMazeDomain(height, width, reward_location,
                                                   walls_location, obstacles_location, initial_state, obstacles_transition_probability)
 
+        #Make a custom domain of directed graph
+        
         sampling_policy = lspi.Policy(lspi.basis_functions.FakeBasis(4), DISCOUNT, 1)
 
         self.samples = []
@@ -118,7 +120,7 @@ class LearningMazeDomain():
         steps_to_goal = 0
         absorb = False
         samples = []
-	print("learn")
+        print("learn")
         while (not absorb) and (steps_to_goal < max_steps):
             action = learned_policy.select_action(self.domain.current_state())
             sample = self.domain.apply_action(action)
