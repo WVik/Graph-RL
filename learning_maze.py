@@ -16,12 +16,12 @@ class LearningMazeDomain():
     def __init__(self, height, width, reward_location, walls_location,
                  obstacles_location, initial_state=None, obstacles_transition_probability=.2, num_sample=NUM_SAMPLES):
 
-        self.domain = lspi.domains.GridMazeDomain(height, width, reward_location,
+        self.domain = lspi.domains.DirectedGridMazeDomain( height, width, reward_location,
                                                   walls_location, obstacles_location, initial_state, obstacles_transition_probability)
 
-        #Make a custom domain of directed graph
+        #Make a custom domain of directed graphs
         
-        sampling_policy = lspi.Policy(lspi.basis_functions.FakeBasis(4), DISCOUNT, 1)
+        sampling_policy = lspi.Policy(self.domain,lspi.basis_functions.FakeBasis(4), DISCOUNT, 1)
 
         self.samples = []
         
@@ -46,7 +46,7 @@ class LearningMazeDomain():
                                  explore=EXPLORE, max_iterations=MAX_ITERATIONS, max_steps=NUM_SAMPLES, initial_policy=None):
 
         if initial_policy is None:
-            initial_policy = lspi.Policy(lspi.basis_functions.ProtoValueBasis(
+            initial_policy = lspi.Policy(self.domain, lspi.basis_functions.ProtoValueBasis(
                 self.domain.graph, 4, num_basis), discount, explore)
 
         learned_policy, distances = lspi.learn(self.samples, initial_policy, self.solver,
@@ -74,7 +74,7 @@ class LearningMazeDomain():
                                explore=EXPLORE, max_iterations=MAX_ITERATIONS, max_steps=NUM_SAMPLES, initial_policy=None):
 
         if initial_policy is None:
-            initial_policy = lspi.Policy(lspi.basis_functions.OneDimensionalPolynomialBasis(degree, 4), discount, explore)
+            initial_policy = lspi.Policy(self.domain, lspi.basis_functions.OneDimensionalPolynomialBasis(degree, 4), discount, explore)
 
         learned_policy, distances = lspi.learn(self.samples, initial_policy, self.solver,
                                                max_iterations=max_iterations)
@@ -106,7 +106,7 @@ class LearningMazeDomain():
         max_steps = 0
 
         if initial_policy is None:
-            initial_policy = lspi.Policy(lspi.basis_functions.Node2vecBasis(
+            initial_policy = lspi.Policy(self.domain, lspi.basis_functions.Node2vecBasis(
                 edgelist, num_actions=4, transition_probabilities=self.domain.transition_probabilities,
                 dimension=dimension,walk_length=walk_length, num_walks=num_walks, window_size=window_size,
                 p=p, q=q, epochs=epochs), discount, explore)

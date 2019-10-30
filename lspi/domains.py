@@ -627,7 +627,7 @@ class DirectedGridMazeDomain(Domain):
 
     __action_names = ['right', 'up', 'left', 'down']
 
-    def __init__(self, list_file, height, width, reward_location, walls_location, obstacles_location, adjacency_list, initial_state=None,
+    def __init__(self, height, width, reward_location, walls_location, obstacles_location, initial_state=None,
                  obstacles_transition_probability=.2):
         """Initialize GridMazeDomain.
 
@@ -651,10 +651,10 @@ class DirectedGridMazeDomain(Domain):
 
         self.width = width
         self.height = height
+
         self.num_states = int(height*width)
         
-        self.adjacency_list = [[]]*int(height*width)
-
+        self.adjacency_list = [[] for _ in range(self.num_states)]
         self.reward_location = reward_location
 
         self.initial_state = initial_state
@@ -667,10 +667,11 @@ class DirectedGridMazeDomain(Domain):
 
         self.adjacency_matrix = np.zeros((height*width, height*width))
         
-        with open('./test') as f:
+        with open('./lspi/graph_10_dir') as f:
             for line in f:
                 array = []  # read rest of lines
                 array.append([int(x) for x in line.split()])
+                #print(array[0][0])
                 self.adjacency_matrix[array[0][0]][array[0][1]] = 1
                 self.adjacency_list[array[0][0]].append(array[0][1])
         
@@ -769,6 +770,7 @@ class DirectedGridMazeDomain(Domain):
             sample = Sample(self._state.copy(), action,
                             reward, next_state.copy(), absorb)
             self.reset(self.initial_state)
+
         else:
             absorb = False
             reward = 0.
@@ -820,7 +822,11 @@ class DirectedGridMazeDomain(Domain):
         if action == 3 and not check_bottom_end(state, self.width, self.height):
             next_location = state + self.width
 
-        return next_location
+        for possible_state in self.adjacency_list[state]:
+                if(next_location == possible_state):
+                    return next_location
+                
+        return state
 
     def reset(self, initial_state=None):
         """Reset the domain to initial state or specified state.
