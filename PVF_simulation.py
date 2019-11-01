@@ -27,17 +27,17 @@ def main():
                 all_results = {}
                 num_iterations = 1
                 for k in xrange(num_iterations):
-                   # num_steps, learned_policy, samples, distances = maze.learn_proto_values_basis(num_basis=dimension, explore=0,discount=discount, max_steps=500, max_iterations=200)
+                    num_steps, learned_policy, samples, distances = maze.learn_proto_values_basis(num_basis=dimension, explore=0,discount=discount, max_steps=500, max_iterations=200)
 
-                    steps_to_goal, learned_policy, samples, distances = maze.learn_node2vec_basis(dimension=dimension)
+                    #steps_to_goal, learned_policy, samples, distances = maze.learn_node2vec_basis(dimension=dimension)
                     all_steps_to_goal, all_samples, all_cumulative_rewards = simulate(num_states, reward_location,
                                                                                                   walls_location, maze, learned_policy)
                     
                     all_results[k] = {'steps_to_goal': all_steps_to_goal, 'samples': all_samples,
                                           'cumul_rewards': all_cumulative_rewards, 'learning_distances': distances}
 
-                    print(all_results[k]["steps_to_goal"])
-		    print("")                
+                    #print(all_results[k]["steps_to_goal"])
+		    #print("")                
 #   print(pvf_all_results[0])
                 #plot_results(pvf_all_results, grid_size, reward_location, dimension, discount, num_samples)
                 display_results(all_results[num_iterations-1], grid_size, reward_location, dimension, discount, num_samples)
