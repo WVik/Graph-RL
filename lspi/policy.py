@@ -157,7 +157,7 @@ class Policy(object):
         q_values  = []
         
         for action in range(self.basis.num_actions):
-            print(state)
+            # print(state)
             next_location = self.domain.next_location(state[0],action)
             if(next_location in self.domain.adjacency_list[state[0]]):
                 q_values.append(self.calc_q_value(state, action))

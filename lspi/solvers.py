@@ -85,7 +85,7 @@ class LSTDQSolver(Solver):
                       .reshape((-1, 1)))
 
             if not sample.absorb:
-                print(sample.next_state)
+               # print(sample.next_state)
                 if(isinstance(sample.next_state, list)):
                     print("here")
 
