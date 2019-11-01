@@ -32,7 +32,7 @@ def learn(data, initial_policy, solver, epsilon=10**-5, max_iterations=10):
         The maximum number of iterations to run before giving up on
         convergence. The change in policy weights are not guaranteed to ever
         go below epsilon. To prevent an infinite loop this parameter must be
-        specified.
+        rpecified.
 
     Return
     ------
@@ -56,7 +56,7 @@ def learn(data, initial_policy, solver, epsilon=10**-5, max_iterations=10):
     # this is just to make sure that changing the weight vector doesn't
     # affect the original policy weights
     curr_policy = copy(initial_policy)
-
+    max_iterations = 1
     distance = float('inf')
     distances = []
     iteration = 0

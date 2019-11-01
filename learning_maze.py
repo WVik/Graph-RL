@@ -27,7 +27,7 @@ class LearningMazeDomain():
         
         for i in xrange(height*width):
             if i != reward_location:
-                for times in range(1,10):
+                for times in range(1,5):
                     self.domain.reset(np.array([i]))
                     action = sampling_policy.select_action(self.domain.current_state())
                     self.samples.append(self.domain.apply_action(action))

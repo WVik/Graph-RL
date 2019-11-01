@@ -17,7 +17,7 @@ def main():
                 print('>>>>>>>>>>>>>>>>>>>>>>>>>> discount factor : ' + str(discount))
                 height = width = grid_size
                 num_states = grid_size*grid_size
-                reward_location = grid_size - 1
+                reward_location = grid_size*grid_size - 1
                 obstacles_location = []
                 walls_location = []
                 maze = LearningMazeDomain(height, width, reward_location, walls_location, obstacles_location,
