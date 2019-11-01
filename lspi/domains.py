@@ -822,6 +822,7 @@ class DirectedGridMazeDomain(Domain):
         if action == 3 and not check_bottom_end(state, self.width, self.height):
             next_location = state + self.width
 
+        
         for possible_state in self.adjacency_list[state]:
                 if(next_location == possible_state):
                     return next_location

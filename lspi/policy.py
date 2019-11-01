@@ -154,13 +154,22 @@ class Policy(object):
             If state's dimensions do not match basis functions expectations.
 
         """
-
-
-        q_values = [self.calc_q_value(state, action)
-                    for action in range(self.basis.num_actions)]
+        q_values  = []
+        
+        for action in range(self.basis.num_actions):
+            print(state)
+            next_location = self.domain.next_location(state[0],action)
+            if(next_location in self.domain.adjacency_list[state[0]]):
+                q_values.append(self.calc_q_value(state, action))
+            else:
+                q_values.append(-1)
+        
+        # q_values = [self.calc_q_value(state, action)
+        #             for action in range(self.basis.num_actions)]
         
         
-
+    
+        
         best_q = float('-inf')
         best_actions = []
         for action, q_value in enumerate(q_values):
