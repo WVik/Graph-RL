@@ -777,30 +777,25 @@ class Node2vecBasis(BasisFunction):
             raise ValueError('dimension must be >= 0')
         
         self._external_embeddings = 0
-        
-        
         self.__num_actions = BasisFunction._validate_num_actions(num_actions)
-        
-        #Vikram - Readjust the dimension
-        self._dimension = dimension/2
-
         self._nxgraph = self.read_graph(graph_edgelist)
 
-        walks = []
-        self.model1, self.model2 = self.learn_embeddings(walks)
-
-
-        # self._walk_length = walk_length
-        # self._num_walks = num_walks
-        # self._window_size = window_size
-        # self._p = p
-        # self._q = q
-        # self._epochs = epochs
-        # self._workers = workers
-
-        # self.G = node2vec.Graph(self._nxgraph, False, self._p, self._q, transition_probabilities)
-        # self.G.preprocess_transition_probs()
-        # walks = self.G.simulate_walks(self._num_walks, self._walk_length)
+        #Vikram - Readjust the dimension
+        if(self._external_embeddings == 1):
+            self._dimension = dimension/2
+            walks = []
+            self.model1, self.model2 = self.learn_embeddings(walks)
+        else:
+            self._walk_length = walk_length
+            self._num_walks = num_walks
+            self._window_size = window_size
+            self._p = p
+            self._q = q
+            self._epochs = epochs
+            self._workers = workers
+            self.G = node2vec.Graph(self._nxgraph, False, self._p, self._q, transition_probabilities)
+            self.G.preprocess_transition_probs()
+            walks = self.G.simulate_walks(self._num_walks, self._walk_length)
         
         
 
@@ -917,7 +912,7 @@ class Node2vecBasis(BasisFunction):
         for edge in G.edges():
             G[edge[0]][edge[1]]['weight'] = 1
 
-        G = G.to_undirected()
+        #G = G.to_undirected()
 
         return G
 
@@ -926,9 +921,11 @@ class Node2vecBasis(BasisFunction):
         Learn embeddings by optimizing the Skipgram objective using SGD.
         '''
         walks = [map(str, walk) for walk in walks]
-        #model = Word2Vec(walks, size=self._dimension, window=self._window_size, min_count=0, sg=1,
-                         #workers=self._workers, iter=self._epochs)
-        model1 = KeyedVectors.load_word2vec_format('./source.txt',binary=False)
-        model2 = KeyedVectors.load_word2vec_format('./dest.txt',binary=False)
-        return model1,model2
+        if(self._external_embeddings == 1):
+            model1 = KeyedVectors.load_word2vec_format('./source.txt',binary=False)
+            model2 = KeyedVectors.load_word2vec_format('./dest.txt',binary=False)
+            return model1,model2
+        else:
+            model = Word2Vec(walks, size=self._dimension, window=self._window_size, min_count=0, sg=1,workers=self._workers, iter=self._epochs)
+            return model
 

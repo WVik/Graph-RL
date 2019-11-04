@@ -52,7 +52,7 @@ def learn(data, initial_policy, solver, epsilon=10**-5, max_iterations=10):
         raise ValueError('epsilon must be > 0: %g' % epsilon)
     if max_iterations <= 0:
         raise ValueError('max_iterations must be > 0: %d' % max_iterations)
-
+    max_iterations = 1
     # this is just to make sure that changing the weight vector doesn't
     # affect the original policy weights
     curr_policy = copy(initial_policy)

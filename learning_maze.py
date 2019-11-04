@@ -27,7 +27,7 @@ class LearningMazeDomain():
         
         for i in xrange(height*width):
             if i != reward_location:
-                for times in range(1,10):
+                for times in range(1,3):
                     self.domain.reset(np.array([i]))
                     action = sampling_policy.select_action(self.domain.current_state())
                     self.samples.append(self.domain.apply_action(action))
@@ -101,7 +101,7 @@ class LearningMazeDomain():
 
     def learn_node2vec_basis(self, maze=None,dimension=NUM_BASIS, walk_length=30, num_walks=10, window_size=10,
                              p=1, q=1, epochs=1, discount=DISCOUNT, explore=EXPLORE, max_iterations=MAX_ITERATIONS,
-                             max_steps=NUM_SAMPLES, initial_policy=None, edgelist ='node2vec/graph/grid10.edgelist'):
+                             max_steps=NUM_SAMPLES, initial_policy=None, edgelist ='node2vec/graph/graph_10_dir'):
                              
         max_steps = 0
 
