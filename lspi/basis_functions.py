@@ -786,6 +786,7 @@ class Node2vecBasis(BasisFunction):
             walks = []
             self.model1, self.model2 = self.learn_embeddings(walks)
         else:
+            self._dimension = dimension
             self._walk_length = walk_length
             self._num_walks = num_walks
             self._window_size = window_size
@@ -796,7 +797,7 @@ class Node2vecBasis(BasisFunction):
             self.G = node2vec.Graph(self._nxgraph, False, self._p, self._q, transition_probabilities)
             self.G.preprocess_transition_probs()
             walks = self.G.simulate_walks(self._num_walks, self._walk_length)
-        
+            self.model = self.learn_embeddings(walks)
         
 
     def size(self):
@@ -809,7 +810,10 @@ class Node2vecBasis(BasisFunction):
             (Referred to as k in the paper).
         """
         #Vikram - Double the number of weights
-        return self._dimension * 2 * self.__num_actions
+        if(self._external_embeddings == 1):
+            return self._dimension * 2 * self.__num_actions
+        else:
+            return self._dimension * self.__num_actions
         #return self._dimension
         
     def evaluate(self, state, action):
@@ -852,22 +856,30 @@ class Node2vecBasis(BasisFunction):
                                   num_sample=1)
 
 
-        phi = np.zeros(self._dimension*2*self.__num_actions)
+        if(self._external_embeddings == 1):
+            phi = np.zeros(self._dimension*2*self.__num_actions)
+        else:
+            phi = np.zeros(self._dimension * self.__num_actions)
 
-        action_window = action*self._dimension*2
-        for basis_fct in self.model1[str(state[0])]:
-            phi[action_window] = basis_fct
-            action_window = action_window + 1
-        
-        maze.domain.reset(np.array([state[0]]))
-        
-        sample = maze.domain.apply_action(action)
-        next_state = sample.next_state
+        if(self._external_embeddings == 1):
+            action_window = action*self._dimension*2
+            for basis_fct in self.model1[str(state[0])]:
+                phi[action_window] = basis_fct
+                action_window = action_window + 1
+            
+            maze.domain.reset(np.array([state[0]]))
+            
+            sample = maze.domain.apply_action(action)
+            next_state = sample.next_state
 
-        for basis_fct in self.model2[str(next_state[0])]:
-            phi[action_window] = basis_fct
-            action_window = action_window + 1
-
+            for basis_fct in self.model2[str(next_state[0])]:
+                phi[action_window] = basis_fct
+                action_window = action_window + 1
+        else:
+            action_window = action*self._dimension
+            for basis_fct in self.model[str(state[0])]:
+                phi[action_window] = basis_fct
+                action_window = action_window + 1   
 	#print(self.model[str(state[0])])
 	#print(self.model[str(next_state[0])])
 	#print(phi)
