@@ -880,16 +880,7 @@ class Node2vecBasis(BasisFunction):
             for basis_fct in self.model[str(state[0])]:
                 phi[action_window] = basis_fct
                 action_window = action_window + 1   
-	#print(self.model[str(state[0])])
-	#print(self.model[str(next_state[0])])
-	#print(phi)
-       
-	#print("     ")
-	#print("     ")
- 
-        #Access the next state and 
-        #next_state = 
-
+	
         return phi
 
     @property
