@@ -667,7 +667,7 @@ class DirectedGridMazeDomain(Domain):
 
         self.adjacency_matrix = np.zeros((height*width, height*width))
         
-        with open('./lspi/graph_10_dir') as f:
+        with open('./lspi/graph_10_maze') as f:
             for line in f:
                 array = []  # read rest of lines
                 array.append([int(x) for x in line.split()])
