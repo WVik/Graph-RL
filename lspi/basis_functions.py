@@ -776,7 +776,7 @@ class Node2vecBasis(BasisFunction):
         if dimension < 0:
             raise ValueError('dimension must be >= 0')
         
-        self._external_embeddings = 0
+        self._external_embeddings = 1
         self.__num_actions = BasisFunction._validate_num_actions(num_actions)
         self._nxgraph = self.read_graph(graph_edgelist)
 
@@ -848,7 +848,7 @@ class Node2vecBasis(BasisFunction):
         grid_size = 10
         height = width = grid_size
         num_states = grid_size*grid_size
-        reward_location = grid_size * grid_size- 1
+        reward_location = grid_size * grid_size- 2
         obstacles_location = []
         walls_location = []
 

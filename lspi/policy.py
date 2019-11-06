@@ -73,13 +73,14 @@ class Policy(object):
         self.domain = domain
         if discount < 0.0 or discount > 1.0:
             raise ValueError('discount must be in range [0, 1]')
-
+	
+	discount = 1
         self.discount = discount
 
         if explore < 0.0 or explore > 1.0:
             raise ValueError('explore must be in range [0, 1]')
 
-        self.explore = explore
+        self.explore = 0.1#explore
 
         if weights is None:
             self.weights = np.random.uniform(-1.0, 1.0, size=(basis.size(),))
