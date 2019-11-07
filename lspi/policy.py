@@ -74,7 +74,7 @@ class Policy(object):
         if discount < 0.0 or discount > 1.0:
             raise ValueError('discount must be in range [0, 1]')
 	
-	discount = 1
+	    discount = 1
         self.discount = discount
 
         if explore < 0.0 or explore > 1.0:
@@ -163,7 +163,7 @@ class Policy(object):
             if(next_location in self.domain.adjacency_list[state[0]]):
                 q_values.append(self.calc_q_value(state, action))
             else:
-                q_values.append(-1)
+                q_values.append(float('-inf'))
         
         # q_values = [self.calc_q_value(state, action)
         #             for action in range(self.basis.num_actions)]
