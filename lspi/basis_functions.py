@@ -794,7 +794,7 @@ class Node2vecBasis(BasisFunction):
             self._q = q
             self._epochs = epochs
             self._workers = workers
-            self.G = node2vec.Graph(self._nxgraph, False, self._p, self._q, transition_probabilities)
+            self.G = node2vec.Graph(self._nxgraph, True, self._p, self._q, transition_probabilities)
             self.G.preprocess_transition_probs()
             walks = self.G.simulate_walks(self._num_walks, self._walk_length)
             self.model = self.learn_embeddings(walks)
