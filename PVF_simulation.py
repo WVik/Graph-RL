@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from learning_maze import LearningMazeDomain
 
 num_samples = 100
-DIMENSION = [40]
+DIMENSION = [10]
 DISCOUNT = [0.9]
 GRID_SIZES = range(10,11)
 
