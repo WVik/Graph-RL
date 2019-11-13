@@ -925,8 +925,8 @@ class Node2vecBasis(BasisFunction):
         '''
         walks = [map(str, walk) for walk in walks]
         if(self._external_embeddings == 1):
-            model1 = KeyedVectors.load_word2vec_format('./source.txt',binary=False)
-            model2 = KeyedVectors.load_word2vec_format('./dest.txt',binary=False)
+            model1 = KeyedVectors.load_word2vec_format('./src.txt',binary=False)
+            model2 = KeyedVectors.load_word2vec_format('./dst.txt',binary=False)
             return model1,model2
         else:
             model = Word2Vec(walks, size=self._dimension, window=self._window_size, min_count=0, sg=1,workers=self._workers, iter=self._epochs)
