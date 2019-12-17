@@ -108,7 +108,7 @@ class Graph():
         self.alias_nodes = alias_nodes
         self.alias_edges = alias_edges
 
-        return
+        return 
 
 
 def alias_setup(probs):

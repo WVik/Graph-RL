@@ -2,7 +2,7 @@ import lspi
 
 import numpy as np
 
-NUM_BASIS = 5
+NUM_BASIS = 10
 DEGREE = 3
 DISCOUNT = .9
 EXPLORE = 0
@@ -41,6 +41,8 @@ class LearningMazeDomain():
                                                         sample in self.samples])
 
         self.solver = lspi.solvers.LSTDQSolver()
+
+
 
     def learn_proto_values_basis(self, num_basis=NUM_BASIS, discount=DISCOUNT,
                                  explore=EXPLORE, max_iterations=MAX_ITERATIONS, max_steps=NUM_SAMPLES, initial_policy=None):
@@ -111,6 +113,11 @@ class LearningMazeDomain():
                 dimension=dimension,walk_length=walk_length, num_walks=num_walks, window_size=window_size,
                 p=p, q=q, epochs=epochs), discount, explore)
 
+
+        #Insert the neural network model
+        return initial_policy.basis.model
+
+        
         learned_policy, distances = lspi.learn(self.samples, initial_policy, self.solver,
                                                max_iterations=max_iterations)
 
@@ -133,5 +140,3 @@ class LearningMazeDomain():
         
         print("learnt")
         return steps_to_goal, learned_policy, samples, distances
-    
-    

@@ -692,7 +692,21 @@ class DirectedGridMazeDomain(Domain):
 
         self._state = self._init_random_state()
 
-    
+    def valid_actions(self):
+        valid_actions = []
+        adj = self.adjacency_list[self._state[0]]
+
+        state = self._state[0]
+        if(state+1 in adj):
+            valid_actions.append(0)
+        if(state-1 in adj):
+            valid_actions.append(2)
+        if(state - self.width in adj):
+            valid_actions.append(1)
+        if(state + self.width in adj):
+            valid_actions.append(3)
+        return valid_actions
+
     def num_actions(self):
         """Return number of actions.
 
@@ -752,6 +766,7 @@ class DirectedGridMazeDomain(Domain):
             If the action index is outside of the range [0, num_actions())
 
         """
+        print(action)
         if action < 0 or action >= self.num_actions():
             raise ValueError('Action index outside of bounds [0, %d)' %
                              self.num_actions())

@@ -776,7 +776,7 @@ class Node2vecBasis(BasisFunction):
         if dimension < 0:
             raise ValueError('dimension must be >= 0')
         
-        self._external_embeddings = 1
+        self._external_embeddings = 0
         self.__num_actions = BasisFunction._validate_num_actions(num_actions)
         self._nxgraph = self.read_graph(graph_edgelist)
 
@@ -794,11 +794,14 @@ class Node2vecBasis(BasisFunction):
             self._q = q
             self._epochs = epochs
             self._workers = workers
-            self.G = node2vec.Graph(self._nxgraph, True, self._p, self._q, transition_probabilities)
+            self.G = node2vec.Graph(self._nxgraph, False, self._p, self._q, transition_probabilities)
             self.G.preprocess_transition_probs()
             walks = self.G.simulate_walks(self._num_walks, self._walk_length)
             self.model = self.learn_embeddings(walks)
-        
+            
+
+    def getEmbeds(self):
+        return self.model
 
     def size(self):
         r"""Return the vector size of the basis function.
@@ -915,7 +918,7 @@ class Node2vecBasis(BasisFunction):
         for edge in G.edges():
             G[edge[0]][edge[1]]['weight'] = 1
 
-        #G = G.to_undirected()
+        G = G.to_undirected()
 
         return G
 
@@ -930,5 +933,6 @@ class Node2vecBasis(BasisFunction):
             return model1,model2
         else:
             model = Word2Vec(walks, size=self._dimension, window=self._window_size, min_count=0, sg=1,workers=self._workers, iter=self._epochs)
+
             return model
 

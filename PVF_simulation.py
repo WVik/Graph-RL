@@ -2,6 +2,9 @@ import pickle
 import numpy as np
 import matplotlib.pyplot as plt
 from learning_maze import LearningMazeDomain
+from DQAgent import DQAgent
+import datetime, random
+
 
 num_samples = 100
 DIMENSION = [10]
@@ -23,19 +26,21 @@ def main():
                 maze = LearningMazeDomain(height, width, reward_location, walls_location, obstacles_location,
                                           num_sample=num_samples)
 
-
                 all_results = {}
                 num_iterations = 1
                 for k in xrange(num_iterations):
                     #num_steps, learned_policy, samples, distances = maze.learn_proto_values_basis(num_basis=dimension, explore=0,
                     #                                                                                                 discount=discount, max_steps=500,
                     #                                                                                                 max_iterations=200)
+                    embeds = maze.learn_node2vec_basis()
+                    print(embeds['97'])
+                
 
-                    steps_to_goal, learned_policy, samples, distances = maze.learn_node2vec_basis(dimension=dimension)
+                    trainDQN(maze.domain, embeds)
+
                     print("learnt")
-		    all_steps_to_goal, all_samples, all_cumulative_rewards = simulate(num_states, reward_location,
-                                                                                                    walls_location, maze, learned_policy)
-                        
+                    all_steps_to_goal, all_samples, all_cumulative_rewards = simulate(num_states, reward_location,walls_location, maze, learned_policy)
+                    
                     all_results[k] = {'steps_to_goal': all_steps_to_goal, 'samples': all_samples,
                                             'cumul_rewards': all_cumulative_rewards, 'learning_distances': distances}
 
@@ -78,6 +83,87 @@ def simulate(num_states, reward_location, walls_location, maze, learned_policy, 
             all_cumulative_rewards[state] = np.sum([s.reward for s in samples])
 
     return all_steps_to_goal, all_samples, all_cumulative_rewards
+
+
+
+def deepQLearning(model, env, randomMode=False, **opt):
+
+    episodes = 100
+    batch_size = 10
+
+    start_time = datetime.datetime.now()
+    
+
+    for episode in range(episodes):
+        loss = 0.0
+        env.reset()
+        game_over = False
+        # number of step for each episode
+        n_step = 0
+        list_action = []
+        next_state = env._state
+        max_iterations = 100
+        while not game_over or n_step > max_iterations:
+            valid_actions = env.valid_actions()
+            # if not valid_actions:
+            #     game_over = True
+            #     print(env.map)
+            #     continue
+
+            current_state = next_state
+            # Get next action
+            print("here")
+            if np.random.rand() < model.epsilon:
+                action = random.choice(valid_actions)
+            else:
+                action = model.predict(current_state)
+            # print("**action = {}".format(action))
+            # Apply action, get reward and new envstate
+
+            new_sample = env.apply_action(action)
+            next_state = new_sample.next_state
+            # print("action = {}, valid_actions = {}".format(action, valid_actions))
+            if new_sample.absorb:
+                game_over = True
+            else:
+                game_over = False
+
+            # if DEBUG:
+            #     print("--------------------------------------")
+            #     print(np.reshape(current_state, newshape=(4, 4)))
+            #     print("action = {},valid_action = {},reward = {}, game_over = {}".format(action, valid_actions,
+            #                                                                              reward, game_over))
+            #     print(np.reshape(next_state, newshape=(4, 4)))
+            list_action.append(action)
+            # Store episode (experience)
+            model.remember(current_state, action, next_state, new_sample.reward, new_sample.absorb)
+            n_step += 1
+            loss = model.replay(batch_size)
+            # TODO: loss = model.evaluate(inputs, targets, verbose=0)
+            # if e % 10 == 0:
+            #     agent.save("./save/cartpole.h5")
+       
+    
+        # if (game_status == STATE_WIN and list_action not in memory):
+        #     memory.append(list_action)
+        template = "Episodes: {:03d}/{:d} |Loss: {:.4f} | Total_reward: {:3.4f} | Episodes: {:d} | Epsilon : {:.3f} | Total win: {:d} | Win rate: {:.3f} | time: {}"
+        # print(template.format(episode, MAX_EPISODES - 1, loss, env.total_reward, n_step, model.epsilon,
+        #                       sum(win_history),
+        #                       win_rate, t))
+
+        # Some Terminating Condition
+
+
+def trainDQN(maze,embeds):
+    print(embeds)
+    env = maze
+    if env is None:
+        return
+    model = DQAgent(env,embeds)
+    deepQLearning(model, env)
+    pass
+
+
 
 
 def display_results(all_results, grid_size, reward_location, dimension, discount, num_samples):
