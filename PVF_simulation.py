@@ -100,7 +100,8 @@ def deepQLearning(model, env, randomMode=False, **opt):
     start_time = datetime.datetime.now()
 
     for episode in range(episodes):
-        loss = 0.0
+	print("Episode done")
+	loss = 0.0
         env.reset()
         game_over = False
         # number of step for each episode

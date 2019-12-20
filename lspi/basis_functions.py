@@ -797,7 +797,7 @@ class Node2vecBasis(BasisFunction):
             self.G = n2v.Gphs(self._nxgraph, False, self._p, self._q, transition_probabilities)
             self.G.preprocess_transition_probs()
             walks = self.G.simulate_walks(self._num_walks, self._walk_length)
-            walks = [list(map(str, walk)) for walk in walks]
+            #walks = [list(map(str, walk)) for walk in walks]
             self.model = self.learn_embeddings(walks)
             
 
@@ -927,7 +927,7 @@ class Node2vecBasis(BasisFunction):
         '''
         Learn embeddings by optimizing the Skipgram objective using SGD.
         '''
-        walks = [map(str, walk) for walk in walks]
+        walks = [list(map(str, walk)) for walk in walks]
         if(self._external_embeddings == 1):
             model1 = KeyedVectors.load_word2vec_format('./src.txt',binary=False)
             model2 = KeyedVectors.load_word2vec_format('./dst.txt',binary=False)
