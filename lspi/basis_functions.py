@@ -782,22 +782,23 @@ class Node2vecBasis(BasisFunction):
 
         #Vikram - Readjust the dimension
         if(self._external_embeddings == 1):
-            self._dimension = dimension/2
-            walks = []
-            self.model1, self.model2 = self.learn_embeddings(walks)
+        	self._dimension = dimension/2
+        	walks = []
+        	self.model1, self.model2 = self.learn_embeddings(walks)
         else:
-            self._dimension = dimension
-            self._walk_length = walk_length
-            self._num_walks = num_walks
-            self._window_size = window_size
-            self._p = p
-            self._q = q
-            self._epochs = epochs
-            self._workers = workers
-            self.G = n2v.Gphs(self._nxgraph, False, self._p, self._q, transition_probabilities)
-            self.G.preprocess_transition_probs()
-            walks = self.G.simulate_walks(self._num_walks, self._walk_length)
-            self.model = self.learn_embeddings(walks)
+        	self._dimension = dimension
+       		self._walk_length = walk_length
+        	self._num_walks = num_walks
+        	self._window_size = window_size
+        	self._p = p
+        	self._q = q
+        	self._epochs = epochs
+        	self._workers = workers
+        	self.G = n2v.Gphs(self._nxgraph, False, self._p, self._q, transition_probabilities)
+        	self.G.preprocess_transition_probs()
+        	walks = self.G.simulate_walks(self._num_walks, self._walk_length)
+	 	walks = [list(map(str, walk)) for walk in walks]
+    		self.model = self.learn_embeddings(walks)
             
 
     def getEmbeds(self):
