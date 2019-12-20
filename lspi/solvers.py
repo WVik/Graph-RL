@@ -86,9 +86,7 @@ class LSTDQSolver(Solver):
 
             if not sample.absorb:
                # print(sample.next_state)
-                if(isinstance(sample.next_state, list)):
-                    print("here")
-
+                
                 best_action = policy.best_action(sample.next_state)
                 phi_sprime = (policy.basis
                               .evaluate(sample.next_state, best_action)

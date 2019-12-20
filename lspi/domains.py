@@ -766,7 +766,7 @@ class DirectedGridMazeDomain(Domain):
             If the action index is outside of the range [0, num_actions())
 
         """
-        print(action)
+        
         if action < 0 or action >= self.num_actions():
             raise ValueError('Action index outside of bounds [0, %d)' %
                              self.num_actions())

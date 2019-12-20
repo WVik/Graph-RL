@@ -112,7 +112,7 @@ def deepQLearning(model, env, randomMode=False, **opt):
 
             current_state = next_state
             # Get next action
-            print("here")
+           
             if np.random.rand() < model.epsilon:
                 action = random.choice(valid_actions)
             else:
