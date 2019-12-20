@@ -12,6 +12,48 @@ class Gphs:
         self.transition_probabilities = transition_probabilities
         self.num_actions = num_actions
 
+
+    def alias_setup(self,probs):
+
+        K = len(probs)
+        q = np.zeros(K)
+        J = np.zeros(K, dtype=np.int)
+
+        smaller = []
+        larger = []
+        for kk, prob in enumerate(probs):
+            q[kk] = K * prob
+            if q[kk] < 1.0:
+                smaller.append(kk)
+            else:
+                larger.append(kk)
+
+        while len(smaller) > 0 and len(larger) > 0:
+            small = smaller.pop()
+            large = larger.pop()
+
+            J[small] = large
+            q[large] = q[large] + q[small] - 1.0
+            if q[large] < 1.0:
+                smaller.append(large)
+            else:
+                larger.append(large)
+
+        return J, q
+
+
+    def alias_draw(self, J, q):
+        '''
+        Draw sample from a non-uniform discrete distribution using alias sampling.
+        '''
+        K = len(J)
+
+        kk = int(np.floor(np.random.rand() * K))
+        if np.random.rand() < q[kk]:
+            return kk
+        else:
+            return J[kk]
+
     def node2vec_walk(self, walk_length, start_node):
         '''
         Simulate a random walk starting from start node.
@@ -29,10 +71,10 @@ class Gphs:
             cur_nbrs = sorted(G.neighbors(cur))
             if len(cur_nbrs) > 0:
                 if len(walk) == 1:
-                    walk.append(cur_nbrs[alias_draw(alias_nodes[cur][0], alias_nodes[cur][1])])
+                    walk.append(cur_nbrs[self.alias_draw(alias_nodes[cur][0], alias_nodes[cur][1])])
                 else:
                     prev = walk[-2]
-                    next = cur_nbrs[alias_draw(alias_edges[(prev, cur)][0],
+                    next = cur_nbrs[self.alias_draw(alias_edges[(prev, cur)][0],
                                                alias_edges[(prev, cur)][1])]
                     if np.random.rand() <= self.transition_probabilities[next]:
                         walk.append(next)
@@ -78,7 +120,7 @@ class Gphs:
         norm_const = sum(unnormalized_probs)
         normalized_probs = [float(u_prob) / norm_const for u_prob in unnormalized_probs]
 
-        return alias_setup(normalized_probs)
+        return self.alias_setup(normalized_probs)
 
     def preprocess_transition_probs(self):
         '''
@@ -92,7 +134,7 @@ class Gphs:
             unnormalized_probs = [G[node][nbr]['weight'] for nbr in sorted(G.neighbors(node))]
             norm_const = sum(unnormalized_probs)
             normalized_probs = [float(u_prob) / norm_const for u_prob in unnormalized_probs]
-            alias_nodes[node] = alias_setup(normalized_probs)
+            alias_nodes[node] = self.alias_setup(normalized_probs)
 
         alias_edges = {}
         triads = {}
@@ -109,49 +151,3 @@ class Gphs:
         self.alias_edges = alias_edges
 
         return
-
-
-def alias_setup(probs):
-    '''
-    Compute utility lists for non-uniform sampling from discrete distributions.
-    Refer to https://hips.seas.harvard.edu/blog/2013/03/03/the-alias-method-efficient-sampling-with-many-discrete-outcomes/
-    for details
-    '''
-    K = len(probs)
-    q = np.zeros(K)
-    J = np.zeros(K, dtype=np.int)
-
-    smaller = []
-    larger = []
-    for kk, prob in enumerate(probs):
-        q[kk] = K * prob
-        if q[kk] < 1.0:
-            smaller.append(kk)
-        else:
-            larger.append(kk)
-
-    while len(smaller) > 0 and len(larger) > 0:
-        small = smaller.pop()
-        large = larger.pop()
-
-        J[small] = large
-        q[large] = q[large] + q[small] - 1.0
-        if q[large] < 1.0:
-            smaller.append(large)
-        else:
-            larger.append(large)
-
-    return J, q
-
-
-def alias_draw(J, q):
-    '''
-    Draw sample from a non-uniform discrete distribution using alias sampling.
-    '''
-    K = len(J)
-
-    kk = int(np.floor(np.random.rand() * K))
-    if np.random.rand() < q[kk]:
-        return kk
-    else:
-        return J[kk]
