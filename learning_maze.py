@@ -25,7 +25,7 @@ class LearningMazeDomain():
 
         self.samples = []
         
-        for i in xrange(height*width):
+        for i in range(height*width):
             if i != reward_location:
                 for times in range(1,10):
                     self.domain.reset(np.array([i]))

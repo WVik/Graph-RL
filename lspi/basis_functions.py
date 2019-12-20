@@ -3,11 +3,11 @@
 
 import abc
 import networkx as nx
-import node2vec
+from n2v import Gphs
 from gensim.models import Word2Vec
 from gensim.models import KeyedVectors
 from gensim.scripts.glove2word2vec import glove2word2vec
-from gensim.test.utils import datapath, get_tmpfile
+from gensim.utils import * #datapath, get_tmpfile
 import numpy as np
 import sys
 
@@ -794,7 +794,7 @@ class Node2vecBasis(BasisFunction):
             self._q = q
             self._epochs = epochs
             self._workers = workers
-            self.G = node2vec.Graph(self._nxgraph, False, self._p, self._q, transition_probabilities)
+            self.G = Gphs(self._nxgraph, False, self._p, self._q, transition_probabilities)
             self.G.preprocess_transition_probs()
             walks = self.G.simulate_walks(self._num_walks, self._walk_length)
             self.model = self.learn_embeddings(walks)

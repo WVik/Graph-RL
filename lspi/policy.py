@@ -73,14 +73,14 @@ class Policy(object):
         self.domain = domain
         if discount < 0.0 or discount > 1.0:
             raise ValueError('discount must be in range [0, 1]')
-	
-	    discount = 1
+
+            discount = 1
         self.discount = discount
 
         if explore < 0.0 or explore > 1.0:
             raise ValueError('explore must be in range [0, 1]')
 
-        self.explore = 0.1#explore
+        self.explore = 0.1  # explore
 
         if weights is None:
             self.weights = np.random.uniform(-1.0, 1.0, size=(basis.size(),))
@@ -127,7 +127,7 @@ class Policy(object):
         """
         if action < 0 or action >= self.basis.num_actions:
             raise IndexError('action must be in range [0, num_actions)')
-        
+
         return self.weights.dot(self.basis.evaluate(state, action))
 
     def best_action(self, state):
@@ -155,22 +155,19 @@ class Policy(object):
             If state's dimensions do not match basis functions expectations.
 
         """
-        q_values  = []
-        
+        q_values = []
+
         for action in range(self.basis.num_actions):
             # print(state)
-            next_location = self.domain.next_location(state[0],action)
+            next_location = self.domain.next_location(state[0], action)
             if(next_location in self.domain.adjacency_list[state[0]]):
                 q_values.append(self.calc_q_value(state, action))
             else:
                 q_values.append(float('-inf'))
-        
+
         # q_values = [self.calc_q_value(state, action)
         #             for action in range(self.basis.num_actions)]
-        
-        
-    
-        
+
         best_q = float('-inf')
         best_actions = []
         for action, q_value in enumerate(q_values):

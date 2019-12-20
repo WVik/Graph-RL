@@ -8,7 +8,7 @@ from random import randint, random
 
 import numpy as np
 
-from sample import Sample
+from .sample import Sample
 from scipy import sparse
 from pygsp import graphs
 import pygsp

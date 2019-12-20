@@ -3,7 +3,7 @@ import networkx as nx
 import random
 
 
-class Graph():
+class Gphs:
     def __init__(self, nx_G, is_directed, p, q, transition_probabilities, num_actions=4):
         self.G = nx_G
         self.is_directed = is_directed
@@ -49,9 +49,9 @@ class Graph():
         G = self.G
         walks = []
         nodes = list(G.nodes())
-        # print 'Walk iteration:'
+        print('Walk iteration:')
         for walk_iter in range(num_walks):
-           # print str(walk_iter + 1), '/', str(num_walks)
+            print(str(walk_iter + 1), '/', str(num_walks))
             random.shuffle(nodes)
             for node in nodes:
                 if self.transition_probabilities[node] > 0:
@@ -108,7 +108,7 @@ class Graph():
         self.alias_nodes = alias_nodes
         self.alias_edges = alias_edges
 
-        return 
+        return
 
 
 def alias_setup(probs):
