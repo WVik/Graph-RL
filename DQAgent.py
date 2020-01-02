@@ -63,7 +63,7 @@ class DQAgent:
         #replace next_state in self.model.predict by the embedding vector from the file
         for state, action, next_state, reward, done in minibatch:
             print(i)
-	        target = reward
+            target = reward
             if not done:
                 target = reward + self.gamma * 1 #* np.amax(self.model.predict([(self.embeddings[str(next_state[0])])]))
             #print((self.embeddings[str(state[0])]).transpose().shape())
