@@ -38,22 +38,24 @@ def main():
                 #display_results(all_results[num_iterations-1], grid_size,reward_location, dimension, discount, num_samples)
 
 
-def simulate(model, num_states, reward_location, walls_location, maze, max_steps=100):
+def simulate(model, num_states, reward_location, walls_location, maze, max_steps=10):
     all_steps_to_goal = {}
     all_samples = {}
     all_cumulative_rewards = {}
     for state in range(num_states):
-        print(state)
+	print("")
+        print(state,end=':')
         if state != reward_location and state not in walls_location:
             steps_to_goal = 0
             maze.domain.reset(np.array([state]))
             absorb = False
             samples = []
             while (not absorb) and (steps_to_goal < max_steps):
-                action = np.amax(model.predict(model.embeds[str(state)]))
-                action = learned_policy.select_action(maze.domain.current_state())
+		
+                action = np.amax(model.predict(np.array([state])))
+                #action = learned_policy.select_action(maze.domain.current_state())
                 sample = maze.domain.apply_action(action)
-                print(sample.next_state)
+                print(sample.next_state,end='')
                 absorb = sample.absorb
                 steps_to_goal += 1
                 samples.append(sample)
@@ -66,7 +68,7 @@ def simulate(model, num_states, reward_location, walls_location, maze, max_steps
 
 def deepQLearning(model, env, randomMode=False, **opt):
 
-    episodes = 100
+    episodes = 10
     batch_size = 10
     start_time = datetime.datetime.now()
 
@@ -88,7 +90,7 @@ def deepQLearning(model, env, randomMode=False, **opt):
             #     continue
             
             current_state = next_state
-            print(current_state,)
+            #print(current_state,)
             # Get next action
            
             if np.random.rand() < model.epsilon:
