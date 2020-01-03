@@ -15,25 +15,25 @@ GRID_SIZES = range(10, 11)
 
 def main():
     for discount in DISCOUNT:
-	for dimension in DIMENSION:
-	    for grid_size in GRID_SIZES:
-		print('>>>>>>>>>>>>>>>>>>>>>>>>>> Simulation grid of size : ' +
-		      str(grid_size) + 'x'+str(grid_size))
-		print(
-		    '>>>>>>>>>>>>>>>>>>>>>>>>>> dimension basis function : ' + str(dimension))
-		print('>>>>>>>>>>>>>>>>>>>>>>>>>> discount factor : ' + str(discount))
-		height = width = grid_size
-		num_states = grid_size*grid_size
-		reward_location = 76
-		obstacles_location = []
-		walls_location = []
-		maze = LearningMazeDomain(height, width, reward_location, walls_location, obstacles_location,
-					  num_sample=num_samples)
-										      
-		embeds = maze.learn_node2vec_basis()
-		model = trainDQN(maze.domain, embeds)
-		print("learnt")
-		simulate(model, 100, reward_location, walls_location, maze)
+		for dimension in DIMENSION:
+			for grid_size in GRID_SIZES:
+				print('>>>>>>>>>>>>>>>>>>>>>>>>>> Simulation grid of size : ' +
+					str(grid_size) + 'x'+str(grid_size))
+				print(
+					'>>>>>>>>>>>>>>>>>>>>>>>>>> dimension basis function : ' + str(dimension))
+				print('>>>>>>>>>>>>>>>>>>>>>>>>>> discount factor : ' + str(discount))
+				height = width = grid_size
+				num_states = grid_size*grid_size
+				reward_location = 76
+				obstacles_location = []
+				walls_location = []
+				maze = LearningMazeDomain(height, width, reward_location, walls_location, obstacles_location,
+							num_sample=num_samples)
+													
+				embeds = maze.learn_node2vec_basis()
+				model = trainDQN(maze.domain, embeds)
+				print("learnt")
+				simulate(model, 100, reward_location, walls_location, maze)
 
 		#display_results(all_results[num_iterations-1], grid_size,reward_location, dimension, discount, num_samples)
 
