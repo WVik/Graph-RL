@@ -65,7 +65,8 @@ class DQAgent:
             #print(i)
             target = reward
             if not done:
-                target = reward + self.gamma * np.amax(self.model.predict([(self.embeddings[str(next_state[0])])]))
+                next_pred = np.array( [self.embeddings[str(next_state[0])]])
+                target = reward + self.gamma * np.amax(self.model.predict(next_pred))
             #print((self.embeddings[str(state[0])]).transpose().shape())
 
             arr = self.embeddings[str(state[0])]
