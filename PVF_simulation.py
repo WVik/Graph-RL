@@ -43,7 +43,7 @@ def simulate(model, num_states, reward_location, walls_location, maze, max_steps
     all_samples = {}
     all_cumulative_rewards = {}
     for state in range(num_states):
-	print("")
+	    print("")
         print(state,end=':')
         if state != reward_location and state not in walls_location:
             steps_to_goal = 0
