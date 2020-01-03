@@ -55,7 +55,7 @@ def simulate(model, num_states, reward_location, walls_location, maze, max_steps
 		print(action)
 		#action = learned_policy.select_action(maze.domain.current_state())
 		sample = maze.domain.apply_action(action)
-		print(sample.next_state,end='')
+		print(sample.next_state)
 		absorb = sample.absorb
 		steps_to_goal += 1
 		samples.append(sample)
