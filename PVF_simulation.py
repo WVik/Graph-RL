@@ -31,13 +31,14 @@ def main():
                                           num_sample=num_samples)
                                                                                       
                 embeds = maze.learn_node2vec_basis()
-                trainDQN(maze.domain, embeds)
+                model = trainDQN(maze.domain, embeds)
                 print("learnt")
+                simulate(model, 100, reward_location, walls_location, maze)
 
                 #display_results(all_results[num_iterations-1], grid_size,reward_location, dimension, discount, num_samples)
 
 
-def simulate(num_states, reward_location, walls_location, maze, learned_policy, max_steps=100):
+def simulate(model, num_states, reward_location, walls_location, maze, max_steps=100):
     all_steps_to_goal = {}
     all_samples = {}
     all_cumulative_rewards = {}
@@ -49,6 +50,7 @@ def simulate(num_states, reward_location, walls_location, maze, learned_policy, 
             absorb = False
             samples = []
             while (not absorb) and (steps_to_goal < max_steps):
+                action = np.amax(model.predict(model.embeds[str(state)]))
                 action = learned_policy.select_action(maze.domain.current_state())
                 sample = maze.domain.apply_action(action)
                 print(sample.next_state)
@@ -112,8 +114,7 @@ def deepQLearning(model, env, randomMode=False, **opt):
             #     print(np.reshape(next_state, newshape=(4, 4)))
             list_action.append(action)
             # Store episode (experience)
-            model.remember(current_state, action, next_state,
-                           new_sample.reward, new_sample.absorb)
+            model.remember(current_state, action, next_state,new_sample.reward, new_sample.absorb)
             n_step += 1
             
             loss = model.replay(batch_size)
@@ -129,7 +130,7 @@ def deepQLearning(model, env, randomMode=False, **opt):
         #                       win_rate, t))
 
         # Some Terminating Condition
-        return model
+    return model
 
 def trainDQN(maze, embeds):
     print(embeds)
