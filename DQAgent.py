@@ -89,7 +89,7 @@ class DQAgent:
         #print((self.embeddings[str(current_state)]).transpose().shape())
         a2 = np.array([self.embeddings[str(current_state[0])]])
         predict = (self.model.predict(a2))[0]
-
+        #print(predict)
         #predict = (self.model.predict((self.embeddings[str(current_state[0])])))
         sort = np.argsort(predict)[-len(predict):]
         sort = np.flipud(sort)
