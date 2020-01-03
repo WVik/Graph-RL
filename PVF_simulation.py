@@ -125,6 +125,7 @@ def deepQLearning(model, env, randomMode=False, **opt):
             model.remember(current_state, action, next_state,
                            new_sample.reward, new_sample.absorb)
             n_step += 1
+            print("here")
             loss = model.replay(batch_size)
             # TODO: loss = model.evaluate(inputs, targets, verbose=0)
             # if e % 10 == 0:
