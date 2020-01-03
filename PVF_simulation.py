@@ -14,27 +14,22 @@ GRID_SIZES = range(10, 11)
 
 
 def main():
-    for discount in DISCOUNT:
+	for discount in DISCOUNT:
 		for dimension in DIMENSION:
 			for grid_size in GRID_SIZES:
-				print('>>>>>>>>>>>>>>>>>>>>>>>>>> Simulation grid of size : ' +
-					str(grid_size) + 'x'+str(grid_size))
-				print(
-					'>>>>>>>>>>>>>>>>>>>>>>>>>> dimension basis function : ' + str(dimension))
+				print('>>>>>>>>>>>>>>>>>>>>>>>>>> Simulation grid of size : '+str(grid_size) + 'x'+str(grid_size))
+				print('>>>>>>>>>>>>>>>>>>>>>>>>>> dimension basis function : ' + str(dimension))
 				print('>>>>>>>>>>>>>>>>>>>>>>>>>> discount factor : ' + str(discount))
 				height = width = grid_size
 				num_states = grid_size*grid_size
 				reward_location = 76
 				obstacles_location = []
 				walls_location = []
-				maze = LearningMazeDomain(height, width, reward_location, walls_location, obstacles_location,
-							num_sample=num_samples)
-													
+				maze = LearningMazeDomain(height, width, reward_location, walls_location, obstacles_location,num_sample=num_samples)
 				embeds = maze.learn_node2vec_basis()
 				model = trainDQN(maze.domain, embeds)
 				print("learnt")
 				simulate(model, 100, reward_location, walls_location, maze)
-
 		#display_results(all_results[num_iterations-1], grid_size,reward_location, dimension, discount, num_samples)
 
 
@@ -43,26 +38,25 @@ def simulate(model, num_states, reward_location, walls_location, maze, max_steps
     all_samples = {}
     all_cumulative_rewards = {}
     for state in range(num_states):
-		print()
-		print state,
-		print ":",
-		if state != reward_location and state not in walls_location:
-			steps_to_goal = 0
-			maze.domain.reset(np.array([state]))
-			absorb = False
-			samples = []
-			next_state = state
-			while (not absorb) and (steps_to_goal < max_steps):		
-				action = model.predict(np.array([next_state]))
+	print state,
+	print ":",
+	if state != reward_location and state not in walls_location:
+		steps_to_goal = 0
+		maze.domain.reset(np.array([state]))
+		absorb = False
+		samples = []
+		next_state = state
+		while (not absorb) and (steps_to_goal < max_steps):		
+			action = model.predict(np.array([next_state]))
 				#print model.predict(np.array([state])),
-				print next_state,
+			print next_state,
 				#action = learned_policy.select_action(maze.domain.current_state())
-				sample = maze.domain.apply_action(action)
+			sample = maze.domain.apply_action(action)
 				#print sample,
-				absorb = sample.absorb
-				steps_to_goal += 1
-				samples.append(sample)
-				next_state = sample.next_state[0]
+			absorb = sample.absorb
+			steps_to_goal += 1
+			samples.append(sample)
+			next_state = sample.next_state[0]
 			all_steps_to_goal[state] = steps_to_goal
 			all_samples[state] = samples
 			all_cumulative_rewards[state] = np.sum([s.reward for s in samples])
