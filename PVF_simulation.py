@@ -29,20 +29,12 @@ def main():
                 walls_location = []
                 maze = LearningMazeDomain(height, width, reward_location, walls_location, obstacles_location,
                                           num_sample=num_samples)
+                                                                                      
+                embeds = maze.learn_node2vec_basis()
+                trainDQN(maze.domain, embeds)
+                print("learnt")
 
-                all_results = {}
-                num_iterations = 1
-                for _ in range(num_iterations):
-                    # num_steps, learned_policy, samples, distances = maze.learn_proto_values_basis(num_basis=dimension, explore=0,
-                    #                                                                                                 discount=discount, max_steps=500,
-                    #                                                                                                 max_iterations=200)
-                    embeds = maze.learn_node2vec_basis()
-                    trainDQN(maze.domain, embeds)
-
-                    print("learnt")
-                    
-
-                display_results(all_results[num_iterations-1], grid_size,reward_location, dimension, discount, num_samples)
+                #display_results(all_results[num_iterations-1], grid_size,reward_location, dimension, discount, num_samples)
 
 
 def simulate(num_states, reward_location, walls_location, maze, learned_policy, max_steps=100):
@@ -57,8 +49,7 @@ def simulate(num_states, reward_location, walls_location, maze, learned_policy, 
             absorb = False
             samples = []
             while (not absorb) and (steps_to_goal < max_steps):
-                action = learned_policy.select_action(
-                    maze.domain.current_state())
+                action = learned_policy.select_action(maze.domain.current_state())
                 sample = maze.domain.apply_action(action)
                 print(sample.next_state)
                 absorb = sample.absorb
@@ -66,8 +57,7 @@ def simulate(num_states, reward_location, walls_location, maze, learned_policy, 
                 samples.append(sample)
                 all_steps_to_goal[state] = steps_to_goal
                 all_samples[state] = samples
-                all_cumulative_rewards[state] = np.sum(
-                    [s.reward for s in samples])
+                all_cumulative_rewards[state] = np.sum([s.reward for s in samples])
 
     return all_steps_to_goal, all_samples, all_cumulative_rewards
 
@@ -76,7 +66,6 @@ def deepQLearning(model, env, randomMode=False, **opt):
 
     episodes = 100
     batch_size = 10
-
     start_time = datetime.datetime.now()
 
     for episode in range(episodes):
@@ -140,7 +129,7 @@ def deepQLearning(model, env, randomMode=False, **opt):
         #                       win_rate, t))
 
         # Some Terminating Condition
-
+        return model
 
 def trainDQN(maze, embeds):
     print(embeds)
@@ -148,8 +137,8 @@ def trainDQN(maze, embeds):
     if env is None:
         return
     model = DQAgent(env, embeds)
-    deepQLearning(model, env)
-    pass
+    model = deepQLearning(model, env)
+    return model
 
 
 def display_results(all_results, grid_size, reward_location, dimension, discount, num_samples):
