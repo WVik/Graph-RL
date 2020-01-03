@@ -32,37 +32,17 @@ def main():
 
                 all_results = {}
                 num_iterations = 1
-                for k in range(num_iterations):
+                for _ in range(num_iterations):
                     # num_steps, learned_policy, samples, distances = maze.learn_proto_values_basis(num_basis=dimension, explore=0,
                     #                                                                                                 discount=discount, max_steps=500,
                     #                                                                                                 max_iterations=200)
                     embeds = maze.learn_node2vec_basis()
-                    print(embeds['97'])
-
                     trainDQN(maze.domain, embeds)
 
                     print("learnt")
-                    all_steps_to_goal, all_samples, all_cumulative_rewards = simulate(
-                        num_states, reward_location, walls_location, maze, learned_policy)
+                    
 
-                    all_results[k] = {'steps_to_goal': all_steps_to_goal, 'samples': all_samples,
-                                      'cumul_rewards': all_cumulative_rewards, 'learning_distances': distances}
-
-                    print(all_results[k]["steps_to_goal"])
-                #   print(pvf_all_results[0])
-                #plot_results(pvf_all_results, grid_size, reward_location, dimension, discount, num_samples)
-                display_results(all_results[num_iterations-1], grid_size,
-                                reward_location, dimension, discount, num_samples)
-                # UNCOMMENT the lines below to right the results in pickle files
-                # n2v_pickle = open('pickles/n2v_' + str(grid_size) + 'grid_' + str(DIMENSION) + 'dimension_' + str(DISCOUNT) + 'discount_'+ str(NUM_SAMPLE) + 'samples', 'wb')
-                # pvf_pickle = open('pickles/pvf_' + str(grid_size) + 'grid_' + str(DIMENSION) + 'dimension_' + str(DISCOUNT) + 'discount_'+ str(NUM_SAMPLE) + 'samples', 'wb')
-                #
-                # print('Writing pickles files...')
-                # pickle.dump(n2v_all_results, n2v_pickle)
-                # pickle.dump(pvf_all_results, pvf_pickle)
-                #
-                # n2v_pickle.close()
-                # pvf_pickle.close()
+                display_results(all_results[num_iterations-1], grid_size,reward_location, dimension, discount, num_samples)
 
 
 def simulate(num_states, reward_location, walls_location, maze, learned_policy, max_steps=100):
@@ -152,7 +132,7 @@ def deepQLearning(model, env, randomMode=False, **opt):
 
         # if (game_status == STATE_WIN and list_action not in memory):
         #     memory.append(list_action)
-        template = "Episodes: {:03d}/{:d} |Loss: {:.4f} | Total_reward: {:3.4f} | Episodes: {:d} | Epsilon : {:.3f} | Total win: {:d} | Win rate: {:.3f} | time: {}"
+        #template = "Episodes: {:03d}/{:d} |Loss: {:.4f} | Total_reward: {:3.4f} | Episodes: {:d} | Epsilon : {:.3f} | Total win: {:d} | Win rate: {:.3f} | time: {}"
         # print(template.format(episode, MAX_EPISODES - 1, loss, env.total_reward, n_step, model.epsilon,
         #                       sum(win_history),
         #                       win_rate, t))

@@ -62,10 +62,10 @@ class DQAgent:
         
         #replace next_state in self.model.predict by the embedding vector from the file
         for state, action, next_state, reward, done in minibatch:
-            print(i)
+            #print(i)
             target = reward
             if not done:
-                target = reward + self.gamma * 1 #* np.amax(self.model.predict([(self.embeddings[str(next_state[0])])]))
+                target = reward + self.gamma * np.amax(self.model.predict([(self.embeddings[str(next_state[0])])]))
             #print((self.embeddings[str(state[0])]).transpose().shape())
 
             arr = self.embeddings[str(state[0])]
@@ -79,8 +79,7 @@ class DQAgent:
             i += 1
 
         # print("input = {}, target = {}".format(inputs[0],targets[0]))
-        self.model.fit(inputs, targets, epochs=8,
-                       batch_size=16, verbose=0)
+        self.model.fit(inputs, targets, epochs=8,batch_size=16, verbose=0)
         if EPSILON_REDUCE and (self.epsilon > self.epsilon_min):
             self.epsilon *= self.epsilon_decay
         return self.model.evaluate(inputs, targets, verbose=0)

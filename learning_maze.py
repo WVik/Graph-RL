@@ -116,27 +116,3 @@ class LearningMazeDomain():
 
         #Insert the neural network model
         return initial_policy.basis.model
-
-        
-        learned_policy, distances = lspi.learn(self.samples, initial_policy, self.solver,
-                                               max_iterations=max_iterations)
-
-        
-        self.domain.reset()
-
-        steps_to_goal = 0
-        absorb = False
-        samples = []
-        print("learn")
-        while (not absorb) and (steps_to_goal < max_steps):
-            action = learned_policy.select_action(self.domain.current_state())
-            sample = self.domain.apply_action(action)
-            absorb = sample.absorb
-            if absorb:
-                print('Reached the goal in %d', steps_to_goal)
-            steps_to_goal += 1
-
-            samples.append(sample)
-        
-        print("learnt")
-        return steps_to_goal, learned_policy, samples, distances
