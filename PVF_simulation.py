@@ -89,7 +89,7 @@ def deepQLearning(model, env, randomMode=False, **opt):
         list_action = []
         next_state = env._state
         max_iterations = 100
-        while not game_over or n_step > max_iterations:
+        while (not game_over) or n_step > max_iterations:
             valid_actions = env.valid_actions()
             # if not valid_actions:
             #     game_over = True
