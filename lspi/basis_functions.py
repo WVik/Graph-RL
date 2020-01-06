@@ -794,7 +794,7 @@ class Node2vecBasis(BasisFunction):
             self._q = q
             self._epochs = epochs
             self._workers = workers
-            self.G = n2v.Gphs(self._nxgraph, False, self._p, self._q, transition_probabilities)
+            self.G = n2v.Gphs(self._nxgraph, True, self._p, self._q, transition_probabilities)
             self.G.preprocess_transition_probs()
             walks = self.G.simulate_walks(self._num_walks, self._walk_length)
             #walks = [list(map(str, walk)) for walk in walks]
@@ -919,7 +919,7 @@ class Node2vecBasis(BasisFunction):
         for edge in G.edges():
             G[edge[0]][edge[1]]['weight'] = 1
 
-        G = G.to_undirected()
+        #G = G.to_undirected()
 
         return G
 

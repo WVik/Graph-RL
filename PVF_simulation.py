@@ -68,7 +68,7 @@ def simulate(model, num_states, reward_location, walls_location, maze, max_steps
 
 def deepQLearning(model, env, randomMode=False, **opt):
 
-    episodes = 1000
+    episodes = 400
     batch_size = 10
     start_time = datetime.datetime.now()
 
@@ -120,7 +120,8 @@ def deepQLearning(model, env, randomMode=False, **opt):
             model.remember(current_state, action, next_state,new_sample.reward, new_sample.absorb)
             n_step += 1
         
-            loss = model.replay(batch_size)
+            if(n_step % 10 == 0):
+                loss = model.replay(batch_size)
         # TODO: loss = model.evaluate(inputs, targets, verbose=0)
         # if e % 10 == 0:
         #     agent.save("./save/cartpole.h5")

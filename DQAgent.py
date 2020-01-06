@@ -44,8 +44,7 @@ class DQAgent:
         model.add(Dense(64, input_shape=(self.dimension,), activation='tanh'))
         model.add(Dense(32, activation='tanh'))
         model.add(Dense(self.action_size))
-        model.compile(loss='mse',
-                      optimizer='adam')
+        model.compile(loss='mse',optimizer='adam')
         return model
 
     def remember(self, current_state, action, reward, next_state, game_over):
