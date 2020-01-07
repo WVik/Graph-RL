@@ -105,7 +105,7 @@ def deepQLearning(model, env, randomMode=False, **opt):
             next_state = new_sample.next_state
         # print("action = {}, valid_actions = {}".format(action, valid_actions))
             if new_sample.absorb:
-                game_over = True
+               game_over = True
             else:
                 game_over = False
 
@@ -120,8 +120,8 @@ def deepQLearning(model, env, randomMode=False, **opt):
             model.remember(current_state, action, next_state,new_sample.reward, new_sample.absorb)
             n_step += 1
         
-            if(n_step % 10 == 0):
-                loss = model.replay(batch_size)
+            #if(n_step % 10 == 0):
+            loss = model.replay(batch_size)
         # TODO: loss = model.evaluate(inputs, targets, verbose=0)
         # if e % 10 == 0:
         #     agent.save("./save/cartpole.h5")
