@@ -776,7 +776,7 @@ class Node2vecBasis(BasisFunction):
         if dimension < 0:
             raise ValueError('dimension must be >= 0')
         
-        self._external_embeddings = 1
+        self._external_embeddings = 0
         self.__num_actions = BasisFunction._validate_num_actions(num_actions)
         self._nxgraph = self.read_graph(graph_edgelist)
 

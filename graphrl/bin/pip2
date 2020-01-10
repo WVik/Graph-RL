@@ -4,7 +4,11 @@
 import re
 import sys
 
+<<<<<<< HEAD
 from pip import main
+=======
+from pip._internal.main import main
+>>>>>>> 3eec399c976756f7e13721f91499b4ca8b64a1cb
 
 if __name__ == '__main__':
     sys.argv[0] = re.sub(r'(-script\.pyw|\.exe)?$', '', sys.argv[0])
