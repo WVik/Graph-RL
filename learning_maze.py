@@ -100,19 +100,21 @@ class LearningMazeDomain():
         return steps_to_goal, learned_policy, samples, distances
 
     def learn_node2vec_basis(self, maze=None,dimension=NUM_BASIS, walk_length=30, num_walks=10, window_size=10,
-                             p=1, q=1, epochs=1, discount=DISCOUNT, explore=EXPLORE, max_iterations=MAX_ITERATIONS,
-                             max_steps=NUM_SAMPLES, initial_policy=None, edgelist ='lspi/graph_10_maze'):
-                             
+        p=1, q=1, epochs=1, discount=DISCOUNT, explore=EXPLORE, max_iterations=MAX_ITERATIONS,
+        max_steps=NUM_SAMPLES, initial_policy=None, edgelist ='lspi/graph_10_demo'):
+        
         max_steps = 0
-
+        
+        
         if initial_policy is None:
-            initial_policy = lspi.Policy(self.domain, lspi.basis_functions.Node2vecBasis(
-                edgelist, num_actions=4, transition_probabilities=self.domain.transition_probabilities,
+            
+            initial_policy = lspi.Policy(self.domain, lspi.basis_functions.Node2vecBasis(edgelist, num_actions=4, 
+                transition_probabilities=self.domain.transition_probabilities,
                 dimension=dimension,walk_length=walk_length, num_walks=num_walks, window_size=window_size,
                 p=p, q=q, epochs=epochs), discount, explore)
-
-        learned_policy, distances = lspi.learn(self.samples, initial_policy, self.solver,
-                                               max_iterations=max_iterations)
+                
+                
+        learned_policy, distances = lspi.learn(self.samples, initial_policy, self.solver,max_iterations=max_iterations)
 
         
         self.domain.reset()
