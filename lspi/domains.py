@@ -319,50 +319,10 @@ class ChainDomain(Domain):
 
 class GridMazeDomain(Domain):
 
-    """Simple grid maze with walls and obstacles.
-
-    Simple MDP. The state space is a set of nodes on a N1 by N2 grid. Most
-    nodes are always accessible (rooms, 1. transition probability), some
-    nodes might be inaccessible (walls, 0. transition probability), and some
-    nodes might be difficult to access (obstacles, p transition probability
-    0 < p < 1). There is one absorbing goal state that gives reward of 100;
-    all other states are non absorbing and do not give any reward
-
-    Parameters
-    ----------
-    height: int
-        Height of the grid, default it
-    width: int
-        Width of the grid
-    num_states: int
-        Number of states (height*width)
-    reward_location: int
-        Location of the state with +100 rewards
-    transition_probabilities: np.array
-        The transition probabilities map for each state
-    graph: pygsp.graphs
-        The graph representing the grid domain
-    """
-
     __action_names = ['right', 'up', 'left', 'down']
 
     def __init__(self, height, width, reward_location, walls_location, obstacles_location, initial_state=None,
                  obstacles_transition_probability=.2):
-        """Initialize GridMazeDomain.
-
-        Parameters
-        ----------
-        height: int
-            Height of the grid, default it
-        width: int
-            Width of the grid
-        walls_location: np.array
-            Locations of the inaccessible states
-        obstacles_location: np.array
-            Locations of the states with difficult access
-        obstacles_transition_probability: float
-            Transition probability to an obstacle state must be in the range
-        [0, 1]"""
 
         if obstacles_transition_probability < 0 or obstacles_transition_probability > 1:
             raise ValueError('obstacles_transition_probability must be in range [0, 1]')
@@ -397,65 +357,17 @@ class GridMazeDomain(Domain):
 
         self._state = self._init_random_state()
 
+
     def num_actions(self):
-        """Return number of actions.
-
-        This domain has 2 actions.
-
-        Returns
-        -------
-        int
-            Number of actions
-
-        """
         return 4
 
+
     def current_state(self):
-        """Return the current state of the domain.
-
-        Returns
-        -------
-        numpy.array
-            The current state as a 1D numpy vector of type int.
-
-        """
         return self._state
 
+
     def apply_action(self, action):
-        """Apply the action to the grid.
-
-        If left is applied then the occupied state index will decrease by 1.
-        Unless the agent is already at 0, in which case the state will not
-        change.
-
-        If right is applied then the occupied state index will increase by 1.
-        Unless the agent is already at num_states-1, in which case the state
-        will not change.
-
-        The reward function is determined by the reward location specified when
-        constructing the domain.
-
-        If failure_probability is > 0 then there is the chance for the left
-        and right actions to fail. If the left action fails then the agent
-        will move right. Similarly if the right action fails then the agent
-        will move left.
-
-        Parameters
-        ----------
-        action: int
-            Action index. Must be in range [0, num_actions())
-
-        Returns
-        -------
-        sample.Sample
-            The sample for the applied action.
-
-        Raises
-        ------
-        ValueError
-            If the action index is outside of the range [0, num_actions())
-
-        """
+     
         if action < 0 or action >= self.num_actions():
             raise ValueError('Action index outside of bounds [0, %d)' %
                              self.num_actions())
@@ -527,35 +439,7 @@ class GridMazeDomain(Domain):
         return next_location
 
     def reset(self, initial_state=None):
-        """Reset the domain to initial state or specified state.
-
-        If the state is unspecified then it will generate a random state, just
-        like when constructing from scratch.
-
-        State must be the same size as the original state. State values can be
-        either 0 or 1. There must be one and only one location that contains
-        a value of 1. Whatever the numpy array type used, it will be converted
-        to an integer numpy array.
-
-        Parameters
-        ----------
-        initial_state: numpy.array
-            The state to set the simulator to. If None then set to a random
-            state.
-
-        Raises
-        ------
-        ValueError
-            If initial state's shape does not match (num_states, ). In
-            otherwords the initial state must be a 1D numpy array with the
-            same length as the existing state.
-        ValueError
-            If part of the state has a value or 1, or there are multiple
-            parts of the state with value of 1.
-        ValueError
-            If there are values in the state other than 0 or 1.
-
-        """
+   
         if initial_state is None:
             self._state = self._init_random_state()
         else:
@@ -600,50 +484,10 @@ class GridMazeDomain(Domain):
 
 class DirectedGridMazeDomain(Domain):
 
-    """Simple grid maze with walls and obstacles.
-
-    Simple MDP. The state space is a set of nodes on a N1 by N2 grid. Most
-    nodes are always accessible (rooms, 1. transition probability), some
-    nodes might be inaccessible (walls, 0. transition probability), and some
-    nodes might be difficult to access (obstacles, p transition probability
-    0 < p < 1). There is one absorbing goal state that gives reward of 100;
-    all other states are non absorbing and do not give any reward
-
-    Parameters
-    ----------
-    height: int
-        Height of the grid, default it
-    width: int
-        Width of the grid
-    num_states: int
-        Number of states (height*width)
-    reward_location: int
-        Location of the state with +100 rewards
-    transition_probabilities: np.array
-        The transition probabilities map for each state
-    graph: pygsp.graphs
-        The graph representing the grid domain
-    """
-
     __action_names = ['right', 'up', 'left', 'down']
 
     def __init__(self, height, width, reward_location, walls_location, obstacles_location, initial_state=None,
                  obstacles_transition_probability=.2):
-        """Initialize GridMazeDomain.
-
-        Parameters
-        ----------
-        height: int
-            Height of the grid, default it
-        width: int
-            Width of the grid
-        walls_location: np.array
-            Locations of the inaccessible states
-        obstacles_location: np.array
-            Locations of the states with difficult access
-        obstacles_transition_probability: float
-            Transition probability to an obstacle state must be in the range
-        [0, 1]"""
 
         if obstacles_transition_probability < 0 or obstacles_transition_probability > 1:
             raise ValueError(
@@ -667,11 +511,10 @@ class DirectedGridMazeDomain(Domain):
 
         self.adjacency_matrix = np.zeros((height*width, height*width))
         
-        with open('./lspi/graph_10_maze') as f:
+        with open('./lspi/graph_10_demo') as f:
             for line in f:
-                array = []  # read rest of lines
+                array = []  
                 array.append([int(x) for x in line.split()])
-                #print(array[0][0])
                 self.adjacency_matrix[array[0][0]][array[0][1]] = 1
                 self.adjacency_list[array[0][0]].append(array[0][1])
         

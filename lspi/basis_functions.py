@@ -848,7 +848,7 @@ class Node2vecBasis(BasisFunction):
         grid_size = 10
         height = width = grid_size
         num_states = grid_size*grid_size
-        reward_location = 76
+        reward_location = 65
         obstacles_location = []
         walls_location = []
 

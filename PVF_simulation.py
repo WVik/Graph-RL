@@ -18,7 +18,7 @@ def main():
                 height = width = grid_size
                 num_states = grid_size*grid_size
                 reward_location = 65
-                obstacles_location = []
+                obstacles_location = [12,15,16,17,27,37,30,42,43,44,45,57,58,61,68,71,72,76,85,86,88,91]
                 walls_location = []
                 maze = LearningMazeDomain(height, width, reward_location, walls_location, obstacles_location,
                                           num_sample=num_samples)
