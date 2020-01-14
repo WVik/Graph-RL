@@ -18,6 +18,7 @@ class LearningMazeDomain():
 
         self.domain = lspi.domains.GridMazeDomain( height, width, reward_location,
                                                   walls_location, obstacles_location, initial_state, obstacles_transition_probability)
+        self.obstacles = obstacles_location
         self.height = height
         self.width = width
         self.reward_location = reward_location
@@ -45,7 +46,7 @@ class LearningMazeDomain():
     def getSamples(self):
         samples = []
         for i in xrange(self.height*self.width):
-            if i != self.reward_location:
+            if i != self.reward_location and i not in self.obstacles:
                 for times in range(1, 10):
                     self.domain.reset(np.array([i]))
                     action = self.sampling_policy.select_action(self.domain.current_state())
@@ -124,23 +125,7 @@ class LearningMazeDomain():
         learned_policy, distances = lspi.learn(maze, initial_policy, self.solver,
                                                max_iterations=max_iterations)
 
-        
         self.domain.reset()
-
-        steps_to_goal = 0
-        absorb = False
-        samples = []
-        print("learn")
-        while (not absorb) and (steps_to_goal < max_steps):
-            action = learned_policy.select_action(self.domain.current_state())
-            sample = self.domain.apply_action(action)
-            absorb = sample.absorb
-            if absorb:
-                print('Reached the goal in %d', steps_to_goal)
-            steps_to_goal += 1
-
-            samples.append(sample)
-        
         print("learnt")
         return steps_to_goal, learned_policy, samples, distances
     

@@ -534,7 +534,9 @@ class DirectedGridMazeDomain(Domain):
                 array = []  
                 array.append([int(x) for x in line.split()])
                 self.adjacency_matrix[array[0][0]][array[0][1]] = 1
+                self.adjacency_matrix[array[0][1]][array[0][0]] = 1
                 self.adjacency_list[array[0][0]].append(array[0][1])
+                self.adjacency_list[array[0][1]].append(array[0][0])
         
         self.graph = graphs.Graph(self.adjacency_matrix)
 
