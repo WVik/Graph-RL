@@ -67,6 +67,7 @@ def learn(maze, initial_policy, solver, epsilon=10**-5, max_iterations=10):
         new_weights = solver.solve(data, curr_policy)
 
         distance = np.linalg.norm(new_weights - curr_policy.weights)
+        print(distance)
         distances.append(distance)
         curr_policy.weights = new_weights
         maze.sampling_policy = curr_policy
