@@ -333,6 +333,8 @@ class GridMazeDomain(Domain):
 
         self.reward_location = reward_location
 
+        self.adjacency_list = [[] for _ in range(self.num_states)]
+
         self.initial_state = initial_state
 
         self.transition_probabilities = np.ones(self.num_states)
@@ -344,6 +346,19 @@ class GridMazeDomain(Domain):
         self.graph = graphs.Grid2d(N1=height, N2=width)
 
         self.weighted_graph = graphs.Grid2d(N1=height, N2=width)
+
+        self.adjacency_matrix = np.zeros((height*width, height*width))
+
+        with open('./lspi/graph_10_demo') as f:
+            for line in f:
+                array = []
+                array.append([int(x) for x in line.split()])
+
+                self.adjacency_matrix[array[0][0]][array[0][1]] = self.adjacency_matrix[array[0][1]][array[0][0]] = 1
+                self.adjacency_list[array[0][0]].append(array[0][1])
+                
+                #If undirected
+                self.adjacency_list[array[0][1]].append(array[0][0])
 
         for obstacle in obstacles_location:
             self.weighted_graph.W[obstacle, :] *= obstacles_transition_probability
@@ -435,8 +450,11 @@ class GridMazeDomain(Domain):
         if action == 3 and not check_bottom_end(state, self.width, self.height):
             next_location = state + self.width
 
+        for possible_state in self.adjacency_list[state]:
+                if(next_location == possible_state):
+                    return next_location
 
-        return next_location
+        return state
 
     def reset(self, initial_state=None):
    
@@ -535,7 +553,22 @@ class DirectedGridMazeDomain(Domain):
 
         self._state = self._init_random_state()
 
-    
+    def action_name(self, action):
+        """Return string representation of actions.
+
+        0:
+            left
+        1:
+            right
+
+        Returns
+        -------
+        str
+            String representation of action.
+        """
+        return ChainDomain.__action_names[action]
+
+
     def num_actions(self):
         """Return number of actions.
 
@@ -673,66 +706,22 @@ class DirectedGridMazeDomain(Domain):
         return state
 
     def reset(self, initial_state=None):
-        """Reset the domain to initial state or specified state.
 
-        If the state is unspecified then it will generate a random state, just
-        like when constructing from scratch.
 
-        State must be the same size as the original state. State values can be
-        either 0 or 1. There must be one and only one location that contains
-        a value of 1. Whatever the numpy array type used, it will be converted
-        to an integer numpy array.
-
-        Parameters
-        ----------
-        initial_state: numpy.array
-            The state to set the simulator to. If None then set to a random
-            state.
-
-        Raises
-        ------
-        ValueError
-            If initial state's shape does not match (num_states, ). In
-            otherwords the initial state must be a 1D numpy array with the
-            same length as the existing state.
-        ValueError
-            If part of the state has a value or 1, or there are multiple
-            parts of the state with value of 1.
-        ValueError
-            If there are values in the state other than 0 or 1.
-
-        """
         if initial_state is None:
             self._state = self._init_random_state()
         else:
             if initial_state.shape != (1, ):
-                raise ValueError('The specified state did not match the '
-                                 + 'current state size')
+                raise ValueError('The specified state did not match the '+'current state size')
             state = initial_state.astype(np.int)
             if state[0] < 0 or state[0] >= self.num_states:
-                raise ValueError('State value must be in range '
-                                 + '[0, num_states)')
+                raise ValueError('State value must be in range '+ '[0, num_states)')
             if self.transition_probabilities[state[0]] == 0.:
-                raise ValueError(
-                    'Initial state cannot be an inaccessible state')
+                raise ValueError('Initial state cannot be an inaccessible state')
             if state[0] == self.reward_location:
                 raise ValueError('Initial state cannot be an absorbing state')
             self._state = state
 
-    def action_name(self, action):
-        """Return string representation of actions.
-
-        0:
-            left
-        1:
-            right
-
-        Returns
-        -------
-        str
-            String representation of action.
-        """
-        return ChainDomain.__action_names[action]
 
     def _init_random_state(self):
         """Return randomly initialized state of the specified size."""

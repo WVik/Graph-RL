@@ -98,7 +98,7 @@ class LSTDQSolver(Solver):
 
             a_mat += phi_sa.dot((phi_sa - policy.discount*phi_sprime).T)
             b_vec += phi_sa*sample.reward
-
+        print("doing")
         a_rank = np.linalg.matrix_rank(a_mat)
         if a_rank == k:
             w = scipy.linalg.solve(a_mat, b_vec)

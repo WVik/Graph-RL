@@ -776,7 +776,7 @@ class Node2vecBasis(BasisFunction):
         if dimension < 0:
             raise ValueError('dimension must be >= 0')
         
-        self._external_embeddings = 0
+        self._external_embeddings = 1
         self.__num_actions = BasisFunction._validate_num_actions(num_actions)
         self._nxgraph = self.read_graph(graph_edgelist)
 
@@ -915,7 +915,7 @@ class Node2vecBasis(BasisFunction):
         for edge in G.edges():
             G[edge[0]][edge[1]]['weight'] = 1
 
-        G = G.to_undirected()
+        #G = G.to_undirected()
 
         return G
 
@@ -925,8 +925,8 @@ class Node2vecBasis(BasisFunction):
         '''
         walks = [map(str, walk) for walk in walks]
         if(self._external_embeddings == 1):
-            model1 = KeyedVectors.load_word2vec_format('./src1.txt',binary=False)
-            model2 = KeyedVectors.load_word2vec_format('./dst1.txt',binary=False)
+            model1 = KeyedVectors.load_word2vec_format('./src.txt',binary=False)
+            model2 = KeyedVectors.load_word2vec_format('./dst.txt',binary=False)
             return model1,model2
         else:
             model = Word2Vec(walks, size=self._dimension, window=self._window_size, min_count=0, sg=1,workers=self._workers, iter=self._epochs)

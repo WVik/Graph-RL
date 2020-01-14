@@ -18,7 +18,7 @@ def main():
                 height = width = grid_size
                 num_states = grid_size*grid_size
                 reward_location = 65
-                obstacles_location = [12,15,16,17,27,37,30,42,43,44,45,57,58,61,68,71,72,76,85,86,88,91]
+                obstacles_location = []
                 walls_location = []
                 maze = LearningMazeDomain(height, width, reward_location, walls_location, obstacles_location,
                                           num_sample=num_samples)
@@ -31,9 +31,10 @@ def main():
                     #                                                                                                 discount=discount, max_steps=500,
                     #                                                                                                 max_iterations=200)
 
-                    steps_to_goal, learned_policy, samples, distances = maze.learn_node2vec_basis(dimension=dimension)
+                    steps_to_goal, learned_policy, samples, distances = maze.learn_node2vec_basis(maze=maze, dimension=dimension)
                     print("learnt")
-                    all_steps_to_goal, all_samples, all_cumulative_rewards = simulate(num_states, reward_location,walls_location, maze, learned_policy)
+                    all_steps_to_goal, all_samples, all_cumulative_rewards = simulate(num_states, reward_location,
+                                                                                                    walls_location, maze, learned_policy)
                         
                     all_results[k] = {'steps_to_goal': all_steps_to_goal, 'samples': all_samples,
                                             'cumul_rewards': all_cumulative_rewards, 'learning_distances': distances}
@@ -59,16 +60,16 @@ def simulate(num_states, reward_location, walls_location, maze, learned_policy, 
     all_samples = {}
     all_cumulative_rewards = {}
     for state in range(num_states):
-        print state 
+	print state
         if state != reward_location and state not in walls_location:
             steps_to_goal = 0
             maze.domain.reset(np.array([state]))
             absorb = False
             samples = []
             while (not absorb) and (steps_to_goal < max_steps):
-                action = learned_policy.select_action(maze.domain.current_state())
+		action = learned_policy.select_action(maze.domain.current_state())
                 sample = maze.domain.apply_action(action)
-                print sample.next_state,
+		print sample.next_state,
                 absorb = sample.absorb
                 steps_to_goal += 1
                 samples.append(sample)

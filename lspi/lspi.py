@@ -6,7 +6,7 @@ from copy import copy
 import numpy as np
 
 
-def learn(data, initial_policy, solver, epsilon=10**-5, max_iterations=10):
+def learn(maze, initial_policy, solver, epsilon=10**-5, max_iterations=10):
     r"""Find the optimal policy for the specified data.
 
     Parameters
@@ -62,10 +62,13 @@ def learn(data, initial_policy, solver, epsilon=10**-5, max_iterations=10):
     iteration = 0
     while distance > epsilon and iteration < max_iterations:
         iteration += 1
+        data = maze.getSamples()
+        print(data[0])
         new_weights = solver.solve(data, curr_policy)
 
         distance = np.linalg.norm(new_weights - curr_policy.weights)
         distances.append(distance)
         curr_policy.weights = new_weights
+        maze.sampling_policy = curr_policy
 
     return curr_policy, distances
