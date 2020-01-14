@@ -17,15 +17,18 @@ def main():
     for discount in DISCOUNT:
         for dimension in DIMENSION:
             for grid_size in GRID_SIZES:
-                print('>>>>>>>>>>>>>>>>>>>>>>>>>> Simulation grid of size : '+str(grid_size) + 'x'+str(grid_size))
-                print('>>>>>>>>>>>>>>>>>>>>>>>>>> dimension basis function : ' + str(dimension))
+                print('>>>>>>>>>>>>>>>>>>>>>>>>>> Simulation grid of size : ' +
+                      str(grid_size) + 'x'+str(grid_size))
+                print(
+                    '>>>>>>>>>>>>>>>>>>>>>>>>>> dimension basis function : ' + str(dimension))
                 print('>>>>>>>>>>>>>>>>>>>>>>>>>> discount factor : ' + str(discount))
                 height = width = grid_size
                 num_states = grid_size*grid_size
                 reward_location = 76
                 obstacles_location = []
                 walls_location = []
-                maze = LearningMazeDomain(height, width, reward_location, walls_location, obstacles_location,num_sample=num_samples)
+                maze = LearningMazeDomain(
+                    height, width, reward_location, walls_location, obstacles_location, num_sample=num_samples)
                 embeds = maze.learn_node2vec_basis()
                 model = trainDQN(maze.domain, embeds)
                 print("learnt")
@@ -39,30 +42,31 @@ def simulate(model, num_states, reward_location, walls_location, maze, max_steps
     all_cumulative_rewards = {}
     for state in range(num_states):
         print("")
-        print(state,end=" ")
-        print(":",end='')
+        print(state, end=" ")
+        print(":", end='')
         if state != reward_location and state not in walls_location:
             steps_to_goal = 0
             maze.domain.reset(np.array([state]))
             absorb = False
             samples = []
             next_state = state
-            while (not absorb) and (steps_to_goal < max_steps):     
+            while (not absorb) and (steps_to_goal < max_steps):
                 action = model.predict(np.array([next_state]))
-                    #print model.predict(np.array([state])),
-                print(next_state,end=' ')
-                print(action,end = ' --> ')
-                    #action = learned_policy.select_action(maze.domain.current_state())
+                #print model.predict(np.array([state])),
+                print(next_state, end=' ')
+                print(action, end=' --> ')
+                #action = learned_policy.select_action(maze.domain.current_state())
                 sample = maze.domain.apply_action(action)
-                    #print sample,
+                #print sample,
                 absorb = sample.absorb
                 steps_to_goal += 1
                 samples.append(sample)
                 next_state = sample.next_state[0]
                 all_steps_to_goal[state] = steps_to_goal
                 all_samples[state] = samples
-                all_cumulative_rewards[state] = np.sum([s.reward for s in samples])
-               
+                all_cumulative_rewards[state] = np.sum(
+                    [s.reward for s in samples])
+
     return all_steps_to_goal, all_samples, all_cumulative_rewards
 
 
@@ -73,7 +77,7 @@ def deepQLearning(model, env, randomMode=False, **opt):
     start_time = datetime.datetime.now()
 
     for episode in range(episodes):
-        if(episode%100 == 0):
+        if(episode % 100 == 0):
             print(episode)
         loss = 0.0
         env.reset()
@@ -89,11 +93,11 @@ def deepQLearning(model, env, randomMode=False, **opt):
         #     game_over = True
         #     print(env.map)
         #     continue
-        
+
             current_state = next_state
         #print(current_state,)
         # Get next action
-       
+
             if np.random.rand() < model.epsilon:
                 action = random.choice(valid_actions)
             else:
@@ -117,9 +121,10 @@ def deepQLearning(model, env, randomMode=False, **opt):
         #     print(np.reshape(next_state, newshape=(4, 4)))
             list_action.append(action)
         # Store episode (experience)
-            model.remember(current_state, action, next_state,new_sample.reward, new_sample.absorb)
+            model.remember(current_state, action, next_state,
+                           new_sample.reward, new_sample.absorb)
             n_step += 1
-        
+
             #if(n_step % 10 == 0):
             loss = model.replay(batch_size)
         # TODO: loss = model.evaluate(inputs, targets, verbose=0)
@@ -135,6 +140,7 @@ def deepQLearning(model, env, randomMode=False, **opt):
 
     # Some Terminating Condition
     return model
+
 
 def trainDQN(maze, embeds):
     print(embeds)
@@ -171,11 +177,13 @@ def plot_results(pvf_all_results, grid_size, reward_location, dimension, discoun
             pvf_steps_to_goal = []
             for k in range(2):
                 pvf_cumulative_rewards.append(
-                pvf_all_results[k]['cumul_rewards'][init_state])
+                    pvf_all_results[k]['cumul_rewards'][init_state])
                 pvf_steps_to_goal.append(
-                pvf_all_results[k]['steps_to_goal'][init_state])
-                pvf_mean_cumulative_rewards.append(np.mean(pvf_cumulative_rewards))
-                pvf_std_cumulative_rewards.append(np.std(pvf_cumulative_rewards))
+                    pvf_all_results[k]['steps_to_goal'][init_state])
+                pvf_mean_cumulative_rewards.append(
+                    np.mean(pvf_cumulative_rewards))
+                pvf_std_cumulative_rewards.append(
+                    np.std(pvf_cumulative_rewards))
                 pvf_mean_steps_to_goal.append(np.mean(pvf_steps_to_goal))
                 pvf_std_steps_to_goal.append(np.std(pvf_steps_to_goal))
 
@@ -183,17 +191,17 @@ def plot_results(pvf_all_results, grid_size, reward_location, dimension, discoun
 
         ax = axs[0]
         ax.errorbar(sum([range(reward_location), range(grid_size, grid_size*grid_size)], []),
-        pvf_mean_steps_to_goal, yerr=pvf_std_steps_to_goal, fmt='ro', ecolor='red')
+                    pvf_mean_steps_to_goal, yerr=pvf_std_steps_to_goal, fmt='ro', ecolor='red')
         ax.set_title('pvf: number of steps')
 
         ax = axs[1]
         ax.errorbar(sum([range(reward_location), range(grid_size, grid_size * grid_size)], []), pvf_mean_cumulative_rewards,
-        yerr=pvf_std_cumulative_rewards, fmt='ro', ecolor='red')
+                    yerr=pvf_std_cumulative_rewards, fmt='ro', ecolor='red')
         ax.set_title('pvf: cumulative reward')
         fig.suptitle('Grid size = ' + str(grid_size) + ', Dimension = ' +
-         str(dimension) + ', Discount =' + str(discount))
+                     str(dimension) + ', Discount =' + str(discount))
         plt.savefig('plots/'+str(grid_size) + 'grid_' + str(dimension) + 'dimension_' + str(discount) + 'discount_' + str(
-        num_samples) + 'samples.pdf')
+            num_samples) + 'samples.pdf')
 
 
 if __name__ == "__main__":

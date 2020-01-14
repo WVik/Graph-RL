@@ -17,7 +17,6 @@ import pygsp
 class Domain(object):
 
     r"""ABC for domains.
-
     Minimum interface for a reinforcement learning domain.
     """
 
@@ -26,9 +25,7 @@ class Domain(object):
     @abc.abstractmethod
     def num_actions(self):
         """Return number of possible actions for the given domain.
-
         Actions are indexed from 0 to num_actions - 1.
-
         Returns
         -------
         int
@@ -39,7 +36,6 @@ class Domain(object):
     @abc.abstractmethod
     def current_state(self):
         """Return the current state of the domain.
-
         Returns
         -------
         numpy.array
@@ -51,13 +47,11 @@ class Domain(object):
     @abc.abstractmethod
     def apply_action(self, action):
         """Apply action and return a sample.
-
         Parameters
         ----------
         action: int
             The action index to apply. This should be a number in the range
             [0, num_actions())
-
         Returns
         -------
         sample.Sample
@@ -69,27 +63,23 @@ class Domain(object):
     @abc.abstractmethod
     def reset(self, initial_state=None):
         """Reset the simulator to initial conditions.
-
         Parameters
         ----------
         initial_state: numpy.array
             Optionally specify the state to reset to. If None then the domain
             should use its default initial set of states. The type will
             generally be a numpy.array, but a subclass may accept other types.
-
         """
         pass  # pragma: no cover
 
     @abc.abstractmethod
     def action_name(self, action):
         """Return a string representation of the action.
-
         Parameters
         ----------
         action: int
             The action index to apply. This number should be in the range
             [0, num_actions())
-
         Returns
         -------
         str
@@ -101,19 +91,16 @@ class Domain(object):
 class ChainDomain(Domain):
 
     """Chain domain from LSPI paper.
-
     Very simple MDP. Used to test LSPI methods and demonstrate the interface.
     The state space is a series of discrete nodes in a chain. There are two
     actions: Left and Right. These actions fail with a configurable
     probability. When the action fails to performs the opposite action. In
     other words if left is the action applied, but it fails, then the agent will
     actually move right (assuming it is not in the right most state).
-
     The default reward for any action in a state is 0. There are 2 special
     states that will give a +1 reward for entering. The two special states can
     be configured to appear at the end of the chain, in the middle, or
     in the middle of each half of the state space.
-
     Parameters
     ----------
     num_states: int
@@ -124,13 +111,11 @@ class ChainDomain(Domain):
     failure_probability: float
         The probability that the applied action will fail. Must be in range
         [0, 1]
-
     """
 
     class RewardLocation(object):
 
         """Location of states giving +1 reward in the chain.
-
         Ends:
             Rewards will be given at the ends of the chain.
         Middle:
@@ -138,7 +123,6 @@ class ChainDomain(Domain):
         HalfMiddles:
             Rewards will be given at the middle two states of each half
             of the chain.
-
         """
 
         Ends, Middle, HalfMiddles = range(3)
@@ -162,62 +146,49 @@ class ChainDomain(Domain):
 
     def num_actions(self):
         """Return number of actions.
-
         Chain domain has 2 actions.
-
         Returns
         -------
         int
             Number of actions
-
         """
         return 2
 
     def current_state(self):
         """Return the current state of the domain.
-
         Returns
         -------
         numpy.array
             The current state as a 1D numpy vector of type int.
-
         """
         return self._state
 
     def apply_action(self, action):
         """Apply the action to the chain.
-
         If left is applied then the occupied state index will decrease by 1.
         Unless the agent is already at 0, in which case the state will not
         change.
-
         If right is applied then the occupied state index will increase by 1.
         Unless the agent is already at num_states-1, in which case the state
         will not change.
-
         The reward function is determined by the reward location specified when
         constructing the domain.
-
         If failure_probability is > 0 then there is the chance for the left
         and right actions to fail. If the left action fails then the agent
         will move right. Similarly if the right action fails then the agent
         will move left.
-
         Parameters
         ----------
         action: int
             Action index. Must be in range [0, num_actions())
-
         Returns
         -------
         sample.Sample
             The sample for the applied action.
-
         Raises
         ------
         ValueError
             If the action index is outside of the range [0, num_actions())
-
         """
         if action < 0 or action >= 2:
             raise ValueError('Action index outside of bounds [0, %d)' %
@@ -257,21 +228,17 @@ class ChainDomain(Domain):
 
     def reset(self, initial_state=None):
         """Reset the domain to initial state or specified state.
-
         If the state is unspecified then it will generate a random state, just
         like when constructing from scratch.
-
         State must be the same size as the original state. State values can be
         either 0 or 1. There must be one and only one location that contains
         a value of 1. Whatever the numpy array type used, it will be converted
         to an integer numpy array.
-
         Parameters
         ----------
         initial_state: numpy.array
             The state to set the simulator to. If None then set to a random
             state.
-
         Raises
         ------
         ValueError
@@ -283,7 +250,6 @@ class ChainDomain(Domain):
             parts of the state with value of 1.
         ValueError
             If there are values in the state other than 0 or 1.
-
         """
         if initial_state is None:
             self._state = ChainDomain.__init_random_state(self.num_states)
@@ -299,12 +265,10 @@ class ChainDomain(Domain):
 
     def action_name(self, action):
         """Return string representation of actions.
-
         0:
             left
         1:
             right
-
         Returns
         -------
         str
@@ -320,10 +284,47 @@ class ChainDomain(Domain):
 
 class GridMazeDomain(Domain):
 
+    """Simple grid maze with walls and obstacles.
+    Simple MDP. The state space is a set of nodes on a N1 by N2 grid. Most
+    nodes are always accessible (rooms, 1. transition probability), some
+    nodes might be inaccessible (walls, 0. transition probability), and some
+    nodes might be difficult to access (obstacles, p transition probability
+    0 < p < 1). There is one absorbing goal state that gives reward of 100;
+    all other states are non absorbing and do not give any reward
+    Parameters
+    ----------
+    height: int
+        Height of the grid, default it
+    width: int
+        Width of the grid
+    num_states: int
+        Number of states (height*width)
+    reward_location: int
+        Location of the state with +100 rewards
+    transition_probabilities: np.array
+        The transition probabilities map for each state
+    graph: pygsp.graphs
+        The graph representing the grid domain
+    """
+
     __action_names = ['right', 'up', 'left', 'down']
 
     def __init__(self, height, width, reward_location, walls_location, obstacles_location, initial_state=None,
                  obstacles_transition_probability=.2):
+        """Initialize GridMazeDomain.
+        Parameters
+        ----------
+        height: int
+            Height of the grid, default it
+        width: int
+            Width of the grid
+        walls_location: np.array
+            Locations of the inaccessible states
+        obstacles_location: np.array
+            Locations of the states with difficult access
+        obstacles_transition_probability: float
+            Transition probability to an obstacle state must be in the range
+        [0, 1]"""
 
         if obstacles_transition_probability < 0 or obstacles_transition_probability > 1:
             raise ValueError(
@@ -334,8 +335,6 @@ class GridMazeDomain(Domain):
         self.num_states = int(height*width)
 
         self.reward_location = reward_location
-
-        self.adjacency_list = [[] for _ in range(self.num_states)]
 
         self.initial_state = initial_state
 
@@ -348,20 +347,6 @@ class GridMazeDomain(Domain):
         self.graph = graphs.Grid2d(N1=height, N2=width)
 
         self.weighted_graph = graphs.Grid2d(N1=height, N2=width)
-
-        self.adjacency_matrix = np.zeros((height*width, height*width))
-
-        with open('./lspi/graph_10_demo') as f:
-            for line in f:
-                array = []
-                array.append([int(x) for x in line.split()])
-
-                self.adjacency_matrix[array[0][0]][array[0][1]
-                                                   ] = self.adjacency_matrix[array[0][1]][array[0][0]] = 1
-                self.adjacency_list[array[0][0]].append(array[0][1])
-
-                #If undirected
-                self.adjacency_list[array[0][1]].append(array[0][0])
 
         for obstacle in obstacles_location:
             self.weighted_graph.W[obstacle,
@@ -378,13 +363,51 @@ class GridMazeDomain(Domain):
         self._state = self._init_random_state()
 
     def num_actions(self):
+        """Return number of actions.
+        This domain has 2 actions.
+        Returns
+        -------
+        int
+            Number of actions
+        """
         return 4
 
     def current_state(self):
+        """Return the current state of the domain.
+        Returns
+        -------
+        numpy.array
+            The current state as a 1D numpy vector of type int.
+        """
         return self._state
 
     def apply_action(self, action):
-
+        """Apply the action to the grid.
+        If left is applied then the occupied state index will decrease by 1.
+        Unless the agent is already at 0, in which case the state will not
+        change.
+        If right is applied then the occupied state index will increase by 1.
+        Unless the agent is already at num_states-1, in which case the state
+        will not change.
+        The reward function is determined by the reward location specified when
+        constructing the domain.
+        If failure_probability is > 0 then there is the chance for the left
+        and right actions to fail. If the left action fails then the agent
+        will move right. Similarly if the right action fails then the agent
+        will move left.
+        Parameters
+        ----------
+        action: int
+            Action index. Must be in range [0, num_actions())
+        Returns
+        -------
+        sample.Sample
+            The sample for the applied action.
+        Raises
+        ------
+        ValueError
+            If the action index is outside of the range [0, num_actions())
+        """
         if action < 0 or action >= self.num_actions():
             raise ValueError('Action index outside of bounds [0, %d)' %
                              self.num_actions())
@@ -454,14 +477,33 @@ class GridMazeDomain(Domain):
         if action == 3 and not check_bottom_end(state, self.width, self.height):
             next_location = state + self.width
 
-        for possible_state in self.adjacency_list[state]:
-                if(next_location == possible_state):
-                    return next_location
-
-        return state
+        return next_location
 
     def reset(self, initial_state=None):
-
+        """Reset the domain to initial state or specified state.
+        If the state is unspecified then it will generate a random state, just
+        like when constructing from scratch.
+        State must be the same size as the original state. State values can be
+        either 0 or 1. There must be one and only one location that contains
+        a value of 1. Whatever the numpy array type used, it will be converted
+        to an integer numpy array.
+        Parameters
+        ----------
+        initial_state: numpy.array
+            The state to set the simulator to. If None then set to a random
+            state.
+        Raises
+        ------
+        ValueError
+            If initial state's shape does not match (num_states, ). In
+            otherwords the initial state must be a 1D numpy array with the
+            same length as the existing state.
+        ValueError
+            If part of the state has a value or 1, or there are multiple
+            parts of the state with value of 1.
+        ValueError
+            If there are values in the state other than 0 or 1.
+        """
         if initial_state is None:
             self._state = self._init_random_state()
         else:
@@ -481,12 +523,10 @@ class GridMazeDomain(Domain):
 
     def action_name(self, action):
         """Return string representation of actions.
-
         0:
             left
         1:
             right
-
         Returns
         -------
         str
@@ -507,10 +547,47 @@ class GridMazeDomain(Domain):
 
 class DirectedGridMazeDomain(Domain):
 
+    """Simple grid maze with walls and obstacles.
+    Simple MDP. The state space is a set of nodes on a N1 by N2 grid. Most
+    nodes are always accessible (rooms, 1. transition probability), some
+    nodes might be inaccessible (walls, 0. transition probability), and some
+    nodes might be difficult to access (obstacles, p transition probability
+    0 < p < 1). There is one absorbing goal state that gives reward of 100;
+    all other states are non absorbing and do not give any reward
+    Parameters
+    ----------
+    height: int
+        Height of the grid, default it
+    width: int
+        Width of the grid
+    num_states: int
+        Number of states (height*width)
+    reward_location: int
+        Location of the state with +100 rewards
+    transition_probabilities: np.array
+        The transition probabilities map for each state
+    graph: pygsp.graphs
+        The graph representing the grid domain
+    """
+
     __action_names = ['right', 'up', 'left', 'down']
 
     def __init__(self, height, width, reward_location, walls_location, obstacles_location, initial_state=None,
                  obstacles_transition_probability=.2):
+        """Initialize GridMazeDomain.
+        Parameters
+        ----------
+        height: int
+            Height of the grid, default it
+        width: int
+            Width of the grid
+        walls_location: np.array
+            Locations of the inaccessible states
+        obstacles_location: np.array
+            Locations of the states with difficult access
+        obstacles_transition_probability: float
+            Transition probability to an obstacle state must be in the range
+        [0, 1]"""
 
         if obstacles_transition_probability < 0 or obstacles_transition_probability > 1:
             raise ValueError(
@@ -534,10 +611,11 @@ class DirectedGridMazeDomain(Domain):
 
         self.adjacency_matrix = np.zeros((height*width, height*width))
 
-        with open('./lspi/graph_10_demo') as f:
+        with open('./lspi/graph_10_maze') as f:
             for line in f:
-                array = []
+                array = []  # read rest of lines
                 array.append([int(x) for x in line.split()])
+                #print(array[0][0])
                 self.adjacency_matrix[array[0][0]][array[0][1]] = 1
                 self.adjacency_list[array[0][0]].append(array[0][1])
 
@@ -557,80 +635,68 @@ class DirectedGridMazeDomain(Domain):
 
         self._state = self._init_random_state()
 
-    def action_name(self, action):
-        """Return string representation of actions.
+    def valid_actions(self):
+        valid_actions = []
+        adj = self.adjacency_list[self._state[0]]
 
-        0:
-            left
-        1:
-            right
-
-        Returns
-        -------
-        str
-            String representation of action.
-        """
-        return ChainDomain.__action_names[action]
+        state = self._state[0]
+        if(state+1 in adj):
+            valid_actions.append(0)
+        if(state-1 in adj):
+            valid_actions.append(2)
+        if(state - self.width in adj):
+            valid_actions.append(1)
+        if(state + self.width in adj):
+            valid_actions.append(3)
+        return valid_actions
 
     def num_actions(self):
         """Return number of actions.
-
         This domain has 2 actions.
-
         Returns
         -------
         int
             Number of actions
-
         """
         return 4
 
     def current_state(self):
         """Return the current state of the domain.
-
         Returns
         -------
         numpy.array
             The current state as a 1D numpy vector of type int.
-
         """
         return self._state
 
     def apply_action(self, action):
         """Apply the action to the grid.
-
         If left is applied then the occupied state index will decrease by 1.
         Unless the agent is already at 0, in which case the state will not
         change.
-
         If right is applied then the occupied state index will increase by 1.
         Unless the agent is already at num_states-1, in which case the state
         will not change.
-
         The reward function is determined by the reward location specified when
         constructing the domain.
-
         If failure_probability is > 0 then there is the chance for the left
         and right actions to fail. If the left action fails then the agent
         will move right. Similarly if the right action fails then the agent
         will move left.
-
         Parameters
         ----------
         action: int
             Action index. Must be in range [0, num_actions())
-
         Returns
         -------
         sample.Sample
             The sample for the applied action.
-
         Raises
         ------
         ValueError
             If the action index is outside of the range [0, num_actions())
-
         """
+
         if action < 0 or action >= self.num_actions():
             raise ValueError('Action index outside of bounds [0, %d)' %
                              self.num_actions())
@@ -708,23 +774,59 @@ class DirectedGridMazeDomain(Domain):
         return state
 
     def reset(self, initial_state=None):
-
+        """Reset the domain to initial state or specified state.
+        If the state is unspecified then it will generate a random state, just
+        like when constructing from scratch.
+        State must be the same size as the original state. State values can be
+        either 0 or 1. There must be one and only one location that contains
+        a value of 1. Whatever the numpy array type used, it will be converted
+        to an integer numpy array.
+        Parameters
+        ----------
+        initial_state: numpy.array
+            The state to set the simulator to. If None then set to a random
+            state.
+        Raises
+        ------
+        ValueError
+            If initial state's shape does not match (num_states, ). In
+            otherwords the initial state must be a 1D numpy array with the
+            same length as the existing state.
+        ValueError
+            If part of the state has a value or 1, or there are multiple
+            parts of the state with value of 1.
+        ValueError
+            If there are values in the state other than 0 or 1.
+        """
         if initial_state is None:
             self._state = self._init_random_state()
         else:
             if initial_state.shape != (1, ):
-                raise ValueError(
-                    'The specified state did not match the '+'current state size')
+                raise ValueError('The specified state did not match the '
+                                 + 'current state size')
             state = initial_state.astype(np.int)
             if state[0] < 0 or state[0] >= self.num_states:
-                raise ValueError(
-                    'State value must be in range ' + '[0, num_states)')
+                raise ValueError('State value must be in range '
+                                 + '[0, num_states)')
             if self.transition_probabilities[state[0]] == 0.:
                 raise ValueError(
                     'Initial state cannot be an inaccessible state')
             if state[0] == self.reward_location:
                 raise ValueError('Initial state cannot be an absorbing state')
             self._state = state
+
+    def action_name(self, action):
+        """Return string representation of actions.
+        0:
+            left
+        1:
+            right
+        Returns
+        -------
+        str
+            String representation of action.
+        """
+        return ChainDomain.__action_names[action]
 
     def _init_random_state(self):
         """Return randomly initialized state of the specified size."""
