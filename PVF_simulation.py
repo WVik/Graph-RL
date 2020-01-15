@@ -53,13 +53,13 @@ def main():
                 # pvf_pickle.close()
 
 
-def simulate(num_states, obstacles_location, reward_location, walls_location, maze, learned_policy, max_steps=100):
+def simulate(num_states, obstacles_location, reward_location, walls_location, maze, learned_policy, max_steps=50):
     all_steps_to_goal = {}
     all_samples = {}
     all_cumulative_rewards = {}
     for state in range(num_states):
-        print state,
-        if state != reward_location and state not in walls_location and state not in obstacles_location:
+        #print state,
+        if state != reward_location and state not in walls_location:# and state not in obstacles_location:
             steps_to_goal = 0
             maze.domain.reset(np.array([state]))
             absorb = False
