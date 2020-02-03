@@ -782,7 +782,8 @@ class Node2vecBasis(BasisFunction):
         self._epochs = epochs
         self._workers = workers
 
-        self.G = node2vec.Graph(self._nxgraph, False, self._p, self._q, transition_probabilities)
+        self.G = node2vec.Graph(self._nxgraph, False,
+                                self._p, self._q, transition_probabilities)
         self.G.preprocess_transition_probs()
         walks = self.G.simulate_walks(self._num_walks, self._walk_length)
         self.model = self.learn_embeddings(walks)
@@ -864,7 +865,8 @@ class Node2vecBasis(BasisFunction):
         Reads the input network in networkx.
         '''
 
-        G = nx.read_edgelist(edge_list, nodetype=int, create_using=nx.DiGraph())
+        G = nx.read_edgelist(edge_list, nodetype=int,
+                             create_using=nx.DiGraph())
         for edge in G.edges():
             G[edge[0]][edge[1]]['weight'] = 1
 
@@ -881,4 +883,3 @@ class Node2vecBasis(BasisFunction):
                          workers=self._workers, iter=self._epochs)
 
         return model
-

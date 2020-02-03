@@ -2,7 +2,7 @@
 """Contains main interface to LSPI algorithm."""
 
 from copy import copy
-
+import random
 import numpy as np
 
 
@@ -65,7 +65,14 @@ def learn(data, initial_policy, solver, epsilon=10**-5, max_iterations=10):
         new_weights = solver.solve(data, curr_policy)
 
         distance = np.linalg.norm(new_weights - curr_policy.weights)
+        print(distance)
+        if(len(distances) > 1 and distance in distances):
+            for i in len(new_weights):
+                new_weights[i] += (random.random()/100)
+
         distances.append(distance)
+
         curr_policy.weights = new_weights
+        #print(curr_policy.best_action([78]))
 
     return curr_policy, distances
