@@ -67,8 +67,8 @@ def learn(data, initial_policy, solver, epsilon=10**-5, max_iterations=10):
         distance = np.linalg.norm(new_weights - curr_policy.weights)
         print(distance)
         if(len(distances) > 1 and distance in distances):
-            for i in len(new_weights):
-                new_weights[i] += (random.random()/100)
+            for i in range(len(new_weights)):
+                new_weights[i] += (random.random()/10)
 
         distances.append(distance)
 

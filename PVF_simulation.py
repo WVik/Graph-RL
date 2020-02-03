@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from learning_maze import LearningMazeDomain
 import random
 
-num_samples = 3000
+num_samples = 7000
 DIMENSION = [50]
 DISCOUNT = [0.9]
 GRID_SIZES = range(10, 11)
@@ -21,8 +21,9 @@ def main():
                 print('>>>>>>>>>>>>>>>>>>>>>>>>>> discount factor : ' + str(discount))
                 height = width = grid_size
                 num_states = grid_size*grid_size
-                reward_location = 50
-                obstacles_location = []
+                reward_location = 65
+                obstacles_location = [12, 15, 16, 17, 27, 37, 30, 42,
+                                      43, 44, 45, 57, 58, 61, 68, 71, 72, 76, 84, 85, 88, 91]
                 walls_location = []
                 maze = LearningMazeDomain(height, width, reward_location, walls_location, obstacles_location,
                                           num_sample=num_samples)
@@ -35,7 +36,7 @@ def main():
                                                                                                   max_iterations=200)
 
                     all_steps_to_goal, all_samples, all_cumulative_rewards = simulate(num_states, reward_location,
-                                                                                      walls_location, maze, learned_policy)
+                                                                                      obstacles_location, maze, learned_policy)
                     all_results[k] = {'steps_to_goal': all_steps_to_goal, 'samples': all_samples,
                                       'cumul_rewards': all_cumulative_rewards, 'learning_distances': distances}
 
@@ -60,14 +61,14 @@ def display_results(all_results, grid_size, reward_location, dimension, discount
 
     mean_steps_to_goal = sum((all_results['steps_to_goal']).values())
 
-    mean_steps_to_goal /= (grid_size*grid_size - 1)
+    mean_steps_to_goal /= (grid_size*grid_size - 23)
 
     print("Grid Size : ", grid_size)
     print("Dimenstion : ", dimension)
     print("Mean steps: ", mean_steps_to_goal)
 
 
-def simulate(num_states, reward_location, walls_location, maze, learned_policy, max_steps=100):
+def simulate(num_states, reward_location, obstacles_location, maze, learned_policy, max_steps=100):
     all_steps_to_goal = {}
     all_samples = {}
     all_cumulative_rewards = {}
@@ -75,7 +76,7 @@ def simulate(num_states, reward_location, walls_location, maze, learned_policy, 
         print("\n")
         print(state),
 
-        if state != reward_location and state not in walls_location:
+        if state != reward_location and state not in obstacles_location:
             steps_to_goal = 0
             maze.domain.reset(np.array([state]))
             absorb = False
