@@ -4,8 +4,8 @@ import matplotlib.pyplot as plt
 from learning_maze import LearningMazeDomain
 import random
 
-SAMPLES = [4000,5000,6000,7000]
-DIMENSION = [50]
+SAMPLES = [500,1000,3000,5000,7000]
+DIMENSION = [60]
 DISCOUNT = [0.9]
 GRID_SIZES = range(10, 11)
 
@@ -30,11 +30,11 @@ def main():
                                             num_sample=num_samples)
 
                     all_results = {}
-                    num_iterations = 100
+                    num_iterations = 40
                     for k in range(num_iterations):
                         num_steps, learned_policy, samples, distances = maze.learn_proto_values_basis(num_basis=dimension, explore=0,
                                                                                                     discount=discount, max_steps=500,
-                                                                                                    max_iterations=200)
+                                                                                                    max_iterations=100)
 
                         all_steps_to_goal, all_samples, all_cumulative_rewards = simulate(num_states, reward_location,
                                                                                         obstacles_location, maze, learned_policy)
@@ -60,10 +60,12 @@ def main():
 
 def display_results(all_results, grid_size, reward_location, dimension, discount, num_samples):
     mean_steps_to_goal = 0
-    
-    num_iterations = 100
+    steps = []
+    num_iterations = 40
     for i in range(num_iterations):
-        mean_steps_to_goal += sum((all_results[i]['steps_to_goal']).values())
+        step = sum((all_results[i]['steps_to_goal']).values())
+        mean_steps_to_goal += step
+        steps.append(step)
     
     mean_steps_to_goal /= (grid_size*grid_size - 23)
     mean_steps_to_goal /= num_iterations
@@ -72,7 +74,7 @@ def display_results(all_results, grid_size, reward_location, dimension, discount
     print("Grid Size : ", grid_size)
     print("Dimension : ", dimension)
     print("Mean steps: ", mean_steps_to_goal)
-
+    print("Steps: ",steps)
 
 def simulate(num_states, reward_location, obstacles_location, maze, learned_policy, max_steps=100):
     all_steps_to_goal = {}
