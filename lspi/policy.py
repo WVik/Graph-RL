@@ -65,11 +65,13 @@ class Policy(object):
 
         FirstWins, LastWins, RandomWins = range(3)
 
-    def __init__(self, basis, discount=1.0,
-                 explore=0.0, weights=None,
+    def __init__(self, basis, domain, discount=0.9,
+                 explore=0.1, weights=None,
                  tie_breaking_strategy=TieBreakingStrategy.RandomWins):
         """Initialize a Policy."""
         self.basis = basis
+
+        self.domain = domain
 
         if discount < 0.0 or discount > 1.0:
             raise ValueError('discount must be in range [0, 1]')
@@ -93,6 +95,7 @@ class Policy(object):
     def __copy__(self):
         """Return a copy of this class with a deep copy of the weights."""
         return Policy(self.basis,
+                      self.domain,
                       self.discount,
                       self.explore,
                       self.weights.copy(),
@@ -153,8 +156,15 @@ class Policy(object):
             If state's dimensions do not match basis functions expectations.
 
         """
-        q_values = [self.calc_q_value(state, action)
-                    for action in range(self.basis.num_actions)]
+        q_values = []
+
+        for action in range(self.basis.num_actions):
+            # print(state)
+            next_location = self.domain.next_location(state[0], action)
+            if(next_location in self.domain.adjacency_list[state[0]]):
+                q_values.append(self.calc_q_value(state, action))
+            else:
+                q_values.append(float('-inf'))
 
         best_q = float('-inf')
         best_actions = []

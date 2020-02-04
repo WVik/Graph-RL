@@ -4,8 +4,8 @@ import matplotlib.pyplot as plt
 from learning_maze import LearningMazeDomain
 import random
 
-SAMPLES = [500,1000,3000,5000,7000]
-DIMENSION = [30,40,50,60]
+SAMPLES = [500, 1000, 3000, 5000, 7000]
+DIMENSION = [30, 40, 50, 60]
 DISCOUNT = [0.9]
 GRID_SIZES = range(10, 11)
 
@@ -24,22 +24,25 @@ def main():
                     num_states = grid_size*grid_size
                     reward_location = 65
                     obstacles_location = [12, 15, 16, 17, 27, 37, 30, 42,
-                                        43, 44, 45, 57, 58, 61, 68, 71, 72, 76, 84, 85, 88, 91]
+                                          43, 44, 45, 57, 58, 61, 68, 71, 72, 76, 84, 85, 88, 91]
                     walls_location = []
                     maze = LearningMazeDomain(height, width, reward_location, walls_location, obstacles_location,
-                                            num_sample=num_samples)
+                                              num_sample=num_samples)
 
                     all_results = {}
                     num_iterations = 40
                     for k in range(num_iterations):
-                        num_steps, learned_policy, samples, distances = maze.learn_proto_values_basis(num_basis=dimension, explore=0,
-                                                                                                    discount=discount, max_steps=500,
-                                                                                                    max_iterations=100)
+                        # num_steps, learned_policy, samples, distances = maze.learn_proto_values_basis(num_basis=dimension, explore=0,
+                        #                                                                               discount=discount, max_steps=500,
+                        #                                                                               max_iterations=100)
+
+                        num_steps, learned_policy, samples, distances = maze.learn_node2vec_basis(
+                            dimension=dimension)
 
                         all_steps_to_goal, all_samples, all_cumulative_rewards = simulate(num_states, reward_location,
-                                                                                        obstacles_location, maze, learned_policy)
+                                                                                          obstacles_location, maze, learned_policy)
                         all_results[k] = {'steps_to_goal': all_steps_to_goal, 'samples': all_samples,
-                                        'cumul_rewards': all_cumulative_rewards, 'learning_distances': distances}
+                                          'cumul_rewards': all_cumulative_rewards, 'learning_distances': distances}
 
                     display_results(all_results, grid_size,
                                     reward_location, dimension, discount, num_samples)
@@ -66,7 +69,7 @@ def display_results(all_results, grid_size, reward_location, dimension, discount
         step = sum((all_results[i]['steps_to_goal']).values())
         mean_steps_to_goal += step
         steps.append(step)
-    
+
     mean_steps_to_goal /= (grid_size*grid_size - 23)
     mean_steps_to_goal /= num_iterations
 
@@ -74,7 +77,8 @@ def display_results(all_results, grid_size, reward_location, dimension, discount
     print("Grid Size : ", grid_size)
     print("Dimension : ", dimension)
     print("Mean steps: ", mean_steps_to_goal)
-    print("Steps: ",steps)
+    print("Steps: ", steps)
+
 
 def simulate(num_states, reward_location, obstacles_location, maze, learned_policy, max_steps=100):
     all_steps_to_goal = {}
