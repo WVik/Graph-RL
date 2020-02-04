@@ -19,13 +19,15 @@ class LearningMazeDomain():
         self.domain = lspi.domains.GridMazeDomain(height, width, reward_location,
                                                   walls_location, obstacles_location, initial_state, obstacles_transition_probability)
 
-        sampling_policy = lspi.Policy(
+        self.num_sample = num_sample
+        self.sampling_policy = lspi.Policy(
             lspi.basis_functions.FakeBasis(4), DISCOUNT, 1)
 
         self.samples = []
 
         for _ in range(num_sample):
-            action = sampling_policy.select_action(self.domain.current_state())
+            action = self.sampling_policy.select_action(
+                self.domain.current_state())
             self.samples.append(self.domain.apply_action(action))
 
         #self.samples = np.load('samples.npy')
@@ -38,6 +40,16 @@ class LearningMazeDomain():
 
         self.solver = lspi.solvers.LSTDQSolver()
 
+    def getSamples(self):
+
+        samples = []
+        for _ in range(self.num_sample):
+            action = self.sampling_policy.select_action(
+                self.domain.current_state())
+            samples.append(self.domain.apply_action(action))
+
+        return samples
+
     def learn_proto_values_basis(self, num_basis=NUM_BASIS, discount=DISCOUNT,
                                  explore=EXPLORE, max_iterations=MAX_ITERATIONS, max_steps=NUM_SAMPLES, initial_policy=None):
 
@@ -45,7 +57,7 @@ class LearningMazeDomain():
             initial_policy = lspi.Policy(lspi.basis_functions.ProtoValueBasis(
                 self.domain.graph, 4, num_basis), discount, explore)
 
-        learned_policy, distances = lspi.learn(self.samples, initial_policy, self.solver,
+        learned_policy, distances = lspi.learn(self, initial_policy, self.solver,
                                                max_iterations=max_iterations)
 
         self.domain.reset()

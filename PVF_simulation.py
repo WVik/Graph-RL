@@ -5,7 +5,7 @@ from learning_maze import LearningMazeDomain
 import random
 
 SAMPLES = [500,1000,3000,5000,7000]
-DIMENSION = [60]
+DIMENSION = [30,40,50,60]
 DISCOUNT = [0.9]
 GRID_SIZES = range(10, 11)
 
