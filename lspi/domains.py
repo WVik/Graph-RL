@@ -365,8 +365,7 @@ class GridMazeDomain(Domain):
         [0, 1]"""
 
         if obstacles_transition_probability < 0 or obstacles_transition_probability > 1:
-            raise ValueError(
-                'obstacles_transition_probability must be in range [0, 1]')
+            raise ValueError('obstacles_transition_probability must be in range [0, 1]')
 
         self.width = width
         self.height = height
@@ -378,34 +377,17 @@ class GridMazeDomain(Domain):
 
         self.transition_probabilities = np.ones(self.num_states)
 
-        self.transition_probabilities[obstacles_location] = 0.
+        self.transition_probabilities[obstacles_location] = 0.2#obstacles_transition_probability
 
         self.transition_probabilities[walls_location] = 0.
-
-        self.adjacency_matrix = np.zeros((height*width, height*width))
-        self.adjacency_list = [[] for _ in range(self.num_states)]
-
-        with open('lspi/grid_10_demo') as f:
-            for line in f:
-                array = []
-                array.append([int(x) for x in line.split()])
-
-                self.adjacency_matrix[array[0][0]][array[0][1]
-                                                   ] = self.adjacency_matrix[array[0][1]][array[0][0]] = 1
-                self.adjacency_list[array[0][0]].append(array[0][1])
-
-                #If undirected
-                self.adjacency_list[array[0][1]].append(array[0][0])
 
         self.graph = graphs.Grid2d(N1=height, N2=width)
 
         self.weighted_graph = graphs.Grid2d(N1=height, N2=width)
 
         for obstacle in obstacles_location:
-            self.weighted_graph.W[obstacle,
-                                  :] *= obstacles_transition_probability
-            self.weighted_graph.W[:,
-                                  obstacle] *= obstacles_transition_probability
+            self.weighted_graph.W[obstacle, :] *= obstacles_transition_probability
+            self.weighted_graph.W[:, obstacle] *= obstacles_transition_probability
 
         for wall in walls_location:
             self.weighted_graph.W[wall, :] = 0.
@@ -482,21 +464,19 @@ class GridMazeDomain(Domain):
 
         # in the case of failing action
         if new_location == self._state[0] or random() > self.transition_probabilities[new_location]:
-            return Sample(self._state.copy(), action, -30., self._state.copy())
+            return Sample(self._state.copy(), action, -30, self._state.copy())
 
         next_state = np.array([new_location])
 
         if self.reward_location == new_location:
             reward = 100.
             absorb = True
-            sample = Sample(self._state.copy(), action,
-                            reward, next_state.copy(), absorb)
+            sample = Sample(self._state.copy(), action, reward, next_state.copy(), absorb)
             self.reset(self.initial_state)
         else:
             absorb = False
-            reward = -1.
-            sample = Sample(self._state.copy(), action,
-                            reward, next_state.copy(), absorb)
+            reward = -30.
+            sample = Sample(self._state.copy(), action, reward, next_state.copy(), absorb)
             self._state = next_state
 
         return sample
@@ -543,6 +523,7 @@ class GridMazeDomain(Domain):
         if action == 3 and not check_bottom_end(state, self.width, self.height):
             next_location = state + self.width
 
+
         return next_location
 
     def reset(self, initial_state=None):
@@ -586,8 +567,7 @@ class GridMazeDomain(Domain):
                 raise ValueError('State value must be in range '
                                  + '[0, num_states)')
             if self.transition_probabilities[state[0]] == 0.:
-                raise ValueError(
-                    'Initial state cannot be an inaccessible state')
+                raise ValueError('Initial state cannot be an inaccessible state')
             if state[0] == self.reward_location:
                 raise ValueError('Initial state cannot be an absorbing state')
             self._state = state

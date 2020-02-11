@@ -4,8 +4,8 @@ import matplotlib.pyplot as plt
 from learning_maze import LearningMazeDomain
 import random
 
-SAMPLES = [500, 1000, 3000, 5000, 7000]
-DIMENSION = [30, 40, 50, 60]
+SAMPLES = [5000]
+DIMENSION = [30]
 DISCOUNT = [0.9]
 GRID_SIZES = range(10, 11)
 
@@ -30,15 +30,13 @@ def main():
                                               num_sample=num_samples)
 
                     all_results = {}
-                    num_iterations = 40
+                    num_iterations = 4
                     for k in range(num_iterations):
-                        # num_steps, learned_policy, samples, distances = maze.learn_proto_values_basis(num_basis=dimension, explore=0,
-                        #                                                                               discount=discount, max_steps=500,
-                        #                                                                               max_iterations=100)
+                        num_steps, learned_policy, samples, distances = maze.learn_proto_values_basis(num_basis=dimension, explore=0.1,
+                                                                                                      discount=discount, max_steps=500,
+                                                                                                      max_iterations=100)
 
-                        num_steps, learned_policy, samples, distances = maze.learn_node2vec_basis(
-                            dimension=dimension)
-
+                        #num_steps, learned_policy, samples, distances = maze.learn_node2vec_basis(dimension=dimension)
                         all_steps_to_goal, all_samples, all_cumulative_rewards = simulate(num_states, reward_location,
                                                                                           obstacles_location, maze, learned_policy)
                         all_results[k] = {'steps_to_goal': all_steps_to_goal, 'samples': all_samples,
@@ -64,7 +62,7 @@ def main():
 def display_results(all_results, grid_size, reward_location, dimension, discount, num_samples):
     mean_steps_to_goal = 0
     steps = []
-    num_iterations = 40
+    num_iterations = 4
     for i in range(num_iterations):
         step = sum((all_results[i]['steps_to_goal']).values())
         mean_steps_to_goal += step

@@ -29,7 +29,8 @@ class Graph():
             cur_nbrs = sorted(G.neighbors(cur))
             if len(cur_nbrs) > 0:
                 if len(walk) == 1:
-                    walk.append(cur_nbrs[alias_draw(alias_nodes[cur][0], alias_nodes[cur][1])])
+                    walk.append(
+                        cur_nbrs[alias_draw(alias_nodes[cur][0], alias_nodes[cur][1])])
                 else:
                     prev = walk[-2]
                     next = cur_nbrs[alias_draw(alias_edges[(prev, cur)][0],
@@ -55,7 +56,8 @@ class Graph():
             random.shuffle(nodes)
             for node in nodes:
                 if self.transition_probabilities[node] > 0:
-                    walks.append(self.node2vec_walk(walk_length=walk_length, start_node=node))
+                    walks.append(self.node2vec_walk(
+                        walk_length=walk_length, start_node=node))
 
         return walks
 
@@ -76,7 +78,8 @@ class Graph():
             else:
                 unnormalized_probs.append(G[dst][dst_nbr]['weight'] / q)
         norm_const = sum(unnormalized_probs)
-        normalized_probs = [float(u_prob) / norm_const for u_prob in unnormalized_probs]
+        normalized_probs = [
+            float(u_prob) / norm_const for u_prob in unnormalized_probs]
 
         return alias_setup(normalized_probs)
 
@@ -89,9 +92,11 @@ class Graph():
 
         alias_nodes = {}
         for node in G.nodes():
-            unnormalized_probs = [G[node][nbr]['weight'] for nbr in sorted(G.neighbors(node))]
+            unnormalized_probs = [G[node][nbr]['weight']
+                                  for nbr in sorted(G.neighbors(node))]
             norm_const = sum(unnormalized_probs)
-            normalized_probs = [float(u_prob) / norm_const for u_prob in unnormalized_probs]
+            normalized_probs = [
+                float(u_prob) / norm_const for u_prob in unnormalized_probs]
             alias_nodes[node] = alias_setup(normalized_probs)
 
         alias_edges = {}
@@ -103,7 +108,8 @@ class Graph():
         else:
             for edge in G.edges():
                 alias_edges[edge] = self.get_alias_edge(edge[0], edge[1])
-                alias_edges[(edge[1], edge[0])] = self.get_alias_edge(edge[1], edge[0])
+                alias_edges[(edge[1], edge[0])] = self.get_alias_edge(
+                    edge[1], edge[0])
 
         self.alias_nodes = alias_nodes
         self.alias_edges = alias_edges
